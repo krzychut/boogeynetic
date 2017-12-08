@@ -9,53 +9,116 @@ from point import *
 from settings import*
 
 class evolution:
-    def __init__(self, _pop_count = 0, _n = 0, _height = 0, _width = 0):
+    def __init__(self, _pop_count = 0, _n = 0, _height = 0, _width = 0, _start_point = Point(), _end_point = Point(-1, -1)):
         self.pop = population(_pop_count, _n, _height, _width)
-        self.pop_new = population()
+        self.pop_selected = population(0, _n)
+        self.pop_new = population(0, _n)
         self.pop_count = _pop_count
+        self.path_length = _n
+        self.height = _height
+        self.width = _width
         self.exp_beta = 3
         self.top_percent = 1
-        self.path_length = _n
         self.best_specimens = [self.pop.paths[0], self.pop.paths[1], self.pop.paths[2]]
 
-    def pathMean(self, path_1 = path(), path_2 = path()):
-        tmp_path = path(self.path_length)
+#___PATH CROSSING___#
+    def pathMean(self, path_1 = Path(), path_2 = Path()):
+        tmp_path = Path(self.path_length)
         tmp_path.start_point = path_1.start_point
         tmp_path.end_point = path_1.end_point
         for i in range(path_1.length):
             tmp_path.points[i] = path_1.points[i].pointMean(path_2.points[i])
+        tmp_path.calcCost()
         return tmp_path
 
+#TODO: implement more crossing functions
+
+
+    def crossing(self, crossing_function):
+        self.pop_new = population()
+        for i in range(len(self.pop_selected.paths)):
+            self.pop_new.insert(self.pop_selected.paths[i])
+        for i in range(len(self.pop_selected.paths) - 1):
+            for j in range(i+1, len(self.pop_selected.paths)):
+                tmp_path = self.pathMean(self.pop_selected.paths[i], self.pop_selected.paths[j])
+                self.pop_new.insert(tmp_path)
+        if DEBUG:
+            print 'Population after crossing:', len(self.pop_new.paths)
+
+#___PATH SELECTION___#
     def selection(self):
         idx = 0
-        while len(self.pop_new.paths) < int(0.5 * math.sqrt(8 * len(self.pop.paths) + 1) + 0.5) \
-        and len(self.pop_new.paths) < len(self.pop.paths) * self.top_percent * 0.01:
-            self.pop_new.insert(self.pop.paths[idx])
+        while len(self.pop_selected.paths) < int(0.5 * math.sqrt(8 * len(self.pop.paths) + 1) + 0.5) \
+        and len(self.pop_selected.paths) < len(self.pop.paths) * self.top_percent * 0.01:
+            self.pop_selected.insert(self.pop.paths[idx])
             if DEBUG:
                 print 'Path', idx, 'added as top percentile.'
             idx += 1
-
         if DEBUG:
             print idx, 'paths added as top percentile.'
-
-        while len(self.pop_new.paths) < int(0.5 * math.sqrt(8 * len(self.pop.paths) + 1) + 0.5):
+        while len(self.pop_selected.paths) < int(0.5 * math.sqrt(8 * len(self.pop.paths) + 1) + 0.5):
             idx = int(np.random.exponential(self.exp_beta) * 100)
             if idx < self.pop_count:
-                self.pop_new.insert(self.pop.paths[idx])
+                self.pop_selected.insert(self.pop.paths[idx])
         if DEBUG:
-            print 'Old population: ', self.pop_count,'New Population:', len(self.pop_new.paths)
+            print 'Old population: ', self.pop_count,'New Population:', len(self.pop_selected.paths)
 
-    def crossing(self):
-        tmp_pop = population()
-        for i in range(len(self.pop_new.paths)):
-            tmp_pop.insert(self.pop_new.paths[i])
-        for i in range(len(self.pop_new.paths) - 1):
-            for j in range(i+1, len(self.pop_new.paths)):
-                tmp_path = self.pathMean(self.pop_new.paths[i], self.pop_new.paths[j])
-                tmp_pop.insert(tmp_path)
+#___UTILITY FUNCTIONS___#
+    def clearPopulation(self, pop_to_clear = None):
+        if None == pop_to_clear:
+            pass
+        else:
+            pop_to_clear = []
+
+    def nextGeneration(self):
+        self.pop = copy.deepcopy(self.pop_new)
+        self.pop_new.paths = []
+        self.pop_selected.paths = []
+        self.pop_count = len(self.pop.paths)
+
+    def updateBestSpecimens(self, pop_to_check = None):
+        if None == pop_to_check:
+            print "No population passed to updateBestSpecimens()"
+        else:
+            for path in pop_to_check.paths:
+                if path.cost < self.best_specimens[0].cost:
+                    self.best_specimens[0] = copy.deepcopy(path)
+                elif path.cost < self.best_specimens[1].cost:
+                    self.best_specimens[1] = copy.deepcopy(path)
+                elif path.cost < self.best_specimens[2].cost:
+                    self.best_specimens[2] = copy.deepcopy(path)
+                else:
+                    break
+
+    def clearRepeatingSpecimens(self):
+        i = 0
+        # tmp_pop = population()
+        while(i < len(self.pop_new.paths)-1):
+            if self.pop_new.paths[i].isEqual(self.pop_new.paths[i+1]):
+                print "Deleting path", i+1
+                print self.pop_new.paths[i].getPoint(), self.pop_new.paths[i+1].getPoint()
+                self.pop_new.delete(i+1)
+            else:
+                i += 1
+
+    def refillPopulation(self, pop_count = None):
+        if None == pop_count:
+            return
+        while len(self.pop_new.paths) < pop_count:
+            path = Path(self.path_length, self.height, self.width)
+            self.pop_new.insert(path)
+        self.pop_count = len(self.pop_new.paths)
+
+    def cropPopulation(self, pop_count = None):
+        if None == pop_count:
+            return
+        while(len(self.pop_new.paths) > pop_count):
+            self.pop_new.delete(len(self.pop_new.paths) - 1)
+
+    def adjustPopulation(self, pop_count = None):
+        if None == pop_count:
+            return
+        self.refillPopulation(pop_count)
+        self.cropPopulation(pop_count)
         if DEBUG:
-            print 'Population after crossing:', len(tmp_pop.paths)
-        return tmp_pop
-
-    def clearPopulation(self):
-        pass
+            print "Adjusted pop_new size to:", len(self.pop_new.paths)

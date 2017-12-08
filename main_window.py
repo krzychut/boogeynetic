@@ -5,7 +5,7 @@ import math as math
 from population import *
 from path import *
 from point import *
-from settings import*
+from settings import *
 
 
 class mainWindow:
@@ -28,5 +28,6 @@ class mainWindow:
         cv.line(self.tmp_map, path.end_point.getPoint(), path.getPoint(path.length-1), self.path_colour, self.path_thickness)
 
     def drawPop(self, _population):
-        for i in range(0, len(_population.paths)):
-            self.drawPath(_population.paths[i])
+        # for i in range(0, len(_population.paths)):
+        for path in _population.paths:
+            self.drawPath(path)
