@@ -13,3 +13,5 @@ global q_key
 q_key = ord('q')
 global v_key
 v_key = ord('v')
+
+#TODO: tutaj beda wszystkie ustawienia wczytywane z jakiegos pliku txt

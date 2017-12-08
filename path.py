@@ -8,7 +8,7 @@ from settings import*
 
 class Path:
     def __init__(self, n = 0, A = 1, B = 1, _start_point = Point(), _end_point = Point(-1, -1)):
-        self.length = n
+        self.length = n #Ilosc wierzcholkow lamanej (nie liczymy punkto poczatkowego i startowego)
         self.points = [Point(randint(0, A-1), randint(0, B-1)) for _ in range(self.length)]
         if 0 < _end_point.x < A and 0 < _end_point.y < B:
             self.end_point = Point(_end_point.x, _end_point.y)
@@ -21,7 +21,7 @@ class Path:
         self.cost = 0
         self.calcCost()
 
-    def getPoint(self, i = 0):
+    def getPoint(self, i = 0):  #Zwraca wspolrzedne wierzcholka jako tuple. Syntax: x, y = path.getPoint(index)
         if i >= self.length:
             return -1, -1
         else:
@@ -29,7 +29,7 @@ class Path:
             return x, y
 
 #TODO: Implement variance calculation
-    def calcCost(self, height_map = None,terrain_map = None):
+    def calcCost(self, height_map = None,terrain_map = None):   #Oblicza funkcje kosztu. Dopisze jeszcze liczenie wariancji - Chuti
         if self.length > 0:
             self.cost += math.sqrt(pow(self.points[0].x - self.start_point.x, 2) +\
             pow(self.points[0].y - self.start_point.y, 2))
@@ -42,7 +42,7 @@ class Path:
             self.cost += math.sqrt(pow(self.end_point.x - self.start_point.x, 2) +\
             pow(self.end_point.y - self.start_point.y, 2))
 
-    def isEqual(self, path = None):
+    def isEqual(self, path = None): #Zwraca True, jesli sciezki sa identyczne (tzn. identyczne wspolrzedne kolejnych wierzcholkow), w przeciwnym razie False
         if None == path:
             print "No path given to path.isEqual()"
             return False
@@ -52,7 +52,7 @@ class Path:
                     return False
             return True
 
-    def printPath(self):
+    def printPath(self):    #Wypisuje kolejne punkty w konsoli
         txt = ''
         txt += "Start: " + str(self.start_point.getPoint()) + "| "
         for i in range(0, len(self.points)):
