@@ -1,0 +1,4 @@
+n pop_count map beta
+###################################
+1 100 'terrain.png' 3 
+5 100 'terrain.png' 4 

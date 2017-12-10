@@ -10,10 +10,14 @@ from main_window import *
 from settings import *
 
 if __name__ == '__main__':
-    window = mainWindow()   #Zawiera mape (3 kanaly, na razie wykorzystany 1, zajme sie jeszcze terenem i mapa kosztow - Chuti)
-    n = 1   #Liczba wierzcholkow lamanej
-    pop_count = 1000    #Liczba populacji
-    evo = evolution(pop_count, n, window.height, window.width)  #To zawiera populacje stara, populacje po selekcji i populacje po krzyzowaniu + funkcje do tego
+    param = Parameters('data.txt')  #zawiera podstawowe parametry (opisana w settings)
+    param.SetPack(1)
+    
+    window = mainWindow(param.map)   #Zawiera mape (3 kanaly, na razie wykorzystany 1, zajme sie jeszcze terenem i mapa kosztow - Chuti)
+    n = param.n   #Liczba wierzcholkow lamanej
+    pop_count = param.pop_count    #Liczba populacji
+    exp_beta=param.beta#beta rozk³adu wykladniczego
+    evo = evolution(exp_beta,pop_count, n, window.height, window.width)  #To zawiera populacje stara, populacje po selekcji i populacje po krzyzowaniu + funkcje do tego
     evo.selection() #Tu selekcja wedlug rozkladu wykladniczego
     evo.crossing(evo.pathMean)  #Tu krzyzowanie. Jako parametr przyjmuje funkcje krzyzujaca, trzeba wiecej takich napisac
     evo.clearRepeatingSpecimens()   #Usuwa powtorzenia z populacji po krzyzowaniu

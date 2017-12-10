@@ -10,7 +10,7 @@ from settings import*
 
 class evolution:
 #___CONSTRUCTORS___#
-    def __init__(self, _pop_count = 0, _n = 0, _height = 0, _width = 0, _start_point = Point(), _end_point = Point(-1, -1)):
+    def __init__(self,_exp_beta, _pop_count = 0, _n = 0, _height = 0, _width = 0, _start_point = Point(), _end_point = Point(-1, -1)):
         self.pop = population(_pop_count, _n, _height, _width)  #Populacja przed selekcja w danympokoleniu
         self.pop_selected = population(0, _n)   #Populacja po selekcji w danym pokoleniu
         self.pop_new = population(0, _n)    #Populacja po krzyzowaniu, na niej wykonane jest usuwanie duplikatow i wyrownanie rozmiaru populacji
@@ -18,7 +18,7 @@ class evolution:
         self.path_length = _n   #Dlugosc sciezki, podawana bedzie w settings.py, wczytana z pliku txt
         self.height = _height   #Wymiary mapy, zapewnia dopuszczalnosc generowanych rozwiazan
         self.width = _width
-        self.exp_beta = 3   #Wspolczynnik ksztaltu rozkladu wykladniczego do selekcji. Dla 1000 osobnikow dziala calkiem dobrze. Do konfiguraji w settings.py
+        self.exp_beta = _exp_beta   #Wspolczynnik ksztaltu rozkladu wykladniczego do selekcji. Dla 1000 osobnikow dziala calkiem dobrze. Do konfiguraji w settings.py - SKONFIGUROWANO
         self.top_percent = 1    #Tyle procent najlepszych sciezek zawsze przechodzi selekcje, bedzie pewnie zmienna globalna w settings.py
         self.best_specimens = [self.pop.paths[0], self.pop.paths[1], self.pop.paths[2]]
 

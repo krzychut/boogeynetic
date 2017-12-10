@@ -21,6 +21,18 @@ class mainWindow:
         self.path_colour = [0, 0, 255]
         self.path_thickness = 2
 
+    def __init__(self,_map):
+        self.heightmap = cv.imread(_map)
+        self.tmp_map = self.heightmap.copy()
+        self.height, self.width = self.tmp_map.shape[:2]
+        self.window_name = 'Evolution'
+        self.mWindow = cv.namedWindow(self.window_name, cv.WINDOW_GUI_NORMAL)
+        self.maphandle = cv.imshow(self.window_name, self.tmp_map)
+        self.key = -1
+        esc = 27
+        self.path_colour = [0, 0, 255]
+        self.path_thickness = 2
+
     def drawPath(self, path):   #Rysuje podana sciezke na tmp_map, bedziemy tez tego uzywac do maskowania obrazow i wyliczania funkcji kosztu
         cv.line(self.tmp_map, path.start_point.getPoint(), path.getPoint(0), self.path_colour, self.path_thickness)
         for i in range(1, path.length):
