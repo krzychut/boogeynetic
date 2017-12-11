@@ -10,7 +10,7 @@ from settings import*
 
 class evolution:
 #___CONSTRUCTORS___#
-    def __init__(self,_exp_beta, _pop_count = 0, _n = 0, _height = 0, _width = 0, _start_point = Point(), _end_point = Point(-1, -1)):
+    def __init__(self,_exp_beta=3, _pop_count = 0, _n = 0, _height = 0, _width = 0, _start_point = Point(), _end_point = Point(-1, -1)):
         self.pop = population(_pop_count, _n, _height, _width)  #Populacja przed selekcja w danympokoleniu
         self.pop_selected = population(0, _n)   #Populacja po selekcji w danym pokoleniu
         self.pop_new = population(0, _n)    #Populacja po krzyzowaniu, na niej wykonane jest usuwanie duplikatow i wyrownanie rozmiaru populacji
