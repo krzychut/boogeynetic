@@ -29,8 +29,14 @@ if __name__ == '__main__':
     window = mainWindow(param.map)   #Zawiera mape (3 kanaly, na razie wykorzystany 1, zajme sie jeszcze terenem i mapa kosztow - Chuti)
     n = param.n   #Liczba wierzcholkow lamanej
     pop_count = param.pop_count    #Liczba populacji
-    exp_beta=param.beta#beta rozk�adu wykladniczego
-    evo = evolution(exp_beta,pop_count, n, window.height, window.width)  #To zawiera populacje stara, populacje po selekcji i populacje po krzyzowaniu + funkcje do tego
+    # exp_beta=param.beta#beta rozk�adu wykladniczego
+    evo = evolution(
+    _exp_beta = param.beta,
+    _top_percent = param.top_percent,
+    _pop_count = param.pop_count,
+    _n = param.n,
+    _height = window.height,
+    _width = window.width)  #To zawiera populacje stara, populacje po selekcji i populacje po krzyzowaniu + funkcje do tego
     evo.selection() #Tu selekcja wedlug rozkladu wykladniczego
     evo.crossing(evo.pathMean)  #Tu krzyzowanie. Jako parametr przyjmuje funkcje krzyzujaca, trzeba wiecej takich napisac
     evo.clearRepeatingSpecimens()   #Usuwa powtorzenia z populacji po krzyzowaniu
@@ -69,4 +75,5 @@ if __name__ == '__main__':
             spec.printPath()
         cv.imshow(window.window_name, window.tmp_map) #Tutaj odswiezany jest wyswietlany obrazek, tzn. tmp_map z naniesionymi sciezkami pojawia sie na ekranie
         window.key = cv.waitKey(0) #To musi byc po kazdym imshow(), czeka na input z klawiatury. Parametr to czas czekania, 0 oznacza nieskonczonosc
+
     cv.destroyAllWindows()  #Po zakonczeniu programu (klawisz 'q') zamyka okienka zeby nie bylo segfaultow

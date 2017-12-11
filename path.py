@@ -29,7 +29,7 @@ class Path:
             return x, y
 
 #TODO: Implement variance calculation
-    def calcCost(self, height_map = None,terrain_map = None):   #Oblicza funkcje kosztu. Dopisze jeszcze liczenie wariancji - Chuti
+    def calcCost(self, terrain = None):   #Oblicza funkcje kosztu. Dopisze jeszcze liczenie wariancji - Chuti
         if self.length > 0:
             self.cost += math.sqrt(pow(self.points[0].x - self.start_point.x, 2) +\
             pow(self.points[0].y - self.start_point.y, 2))

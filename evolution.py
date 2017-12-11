@@ -10,7 +10,7 @@ from settings import*
 
 class evolution:
 #___CONSTRUCTORS___#
-    def __init__(self,_exp_beta=3, _pop_count = 0, _n = 0, _height = 0, _width = 0, _start_point = Point(), _end_point = Point(-1, -1)):
+    def __init__(self,_exp_beta=3, _top_percent = 1, _pop_count = 0, _n = 0, _height = 0, _width = 0, _start_point = Point(), _end_point = Point(-1, -1)):
         self.pop = population(_pop_count, _n, _height, _width)  #Populacja przed selekcja w danympokoleniu
         self.pop_selected = population(0, _n)   #Populacja po selekcji w danym pokoleniu
         self.pop_new = population(0, _n)    #Populacja po krzyzowaniu, na niej wykonane jest usuwanie duplikatow i wyrownanie rozmiaru populacji
@@ -52,8 +52,8 @@ class evolution:
         while len(self.pop_selected.paths) < int(0.5 * math.sqrt(8 * len(self.pop.paths) + 1) + 0.5) \
         and len(self.pop_selected.paths) < len(self.pop.paths) * self.top_percent * 0.01:
             self.pop_selected.insert(self.pop.paths[idx])
-            if DEBUG:
-                print 'Path', idx, 'added as top percentile.'
+            # if DEBUG:
+            #     print 'Path', idx, 'added as top percentile.'
             idx += 1
         if DEBUG:
             print idx, 'paths added as top percentile.'
@@ -93,14 +93,18 @@ class evolution:
 
     def clearRepeatingSpecimens(self):  #Czysci duplikaty w pop_new
         i = 0
+        deleted = 0
         # tmp_pop = population()
         while(i < len(self.pop_new.paths)-1):
             if self.pop_new.paths[i].isEqual(self.pop_new.paths[i+1]):
-                print "Deleting path", i+1
-                print self.pop_new.paths[i].getPoint(), self.pop_new.paths[i+1].getPoint()
+                # print "Deleting path", i+1
+                # print self.pop_new.paths[i].getPoint(), self.pop_new.paths[i+1].getPoint()
                 self.pop_new.delete(i+1)
+                deleted += 1
             else:
                 i += 1
+        if DEBUG:
+            print "Path duplicates deleted after crossing:", deleted
 
     def refillPopulation(self, pop_count = None):   #Uzupelnia populacje pop_new do zadanej liczebnosci. Jesli podasz mniejsza niz obecna, nic nie robi
         if None == pop_count:
