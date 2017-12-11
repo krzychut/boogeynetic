@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 import cv2 as cv
 import numpy as np
 from random import randint
 import math as math
+import sys
 from evolution import *
 from population import *
 from path import *
@@ -11,18 +14,28 @@ from settings import *
 
 if __name__ == '__main__':
     param = Parameters('data.txt')  #zawiera podstawowe parametry (opisana w settings)
-    param.SetPack(1)
-    
+    if 1 < len(sys.argv):
+        try:
+            print "argv length:", len(sys.argv)
+            print "argv[0]:", sys.argv[1]
+            param.SetPack(int(str(sys.argv[1])))
+        except ValueError:
+            print "Argument passed must be an integer. Using default parameter set: 1"
+            param.SetPack(1)
+    else:
+        print "No argument passed. Using default parameter set: 1"
+        param.SetPack(1)
+
     window = mainWindow(param.map)   #Zawiera mape (3 kanaly, na razie wykorzystany 1, zajme sie jeszcze terenem i mapa kosztow - Chuti)
     n = param.n   #Liczba wierzcholkow lamanej
     pop_count = param.pop_count    #Liczba populacji
-    exp_beta=param.beta#beta rozk³adu wykladniczego
+    exp_beta=param.beta#beta rozkï¿½adu wykladniczego
     evo = evolution(exp_beta,pop_count, n, window.height, window.width)  #To zawiera populacje stara, populacje po selekcji i populacje po krzyzowaniu + funkcje do tego
     evo.selection() #Tu selekcja wedlug rozkladu wykladniczego
     evo.crossing(evo.pathMean)  #Tu krzyzowanie. Jako parametr przyjmuje funkcje krzyzujaca, trzeba wiecej takich napisac
     evo.clearRepeatingSpecimens()   #Usuwa powtorzenia z populacji po krzyzowaniu
     evo.adjustPopulation(pop_count) #Dodaje losowe sciezki albo usuwa najgorsze z nowej populacji, zeby bylo ich tyle co przed selekcja
-    evo.updateBestSpecimens(evo.pop_new)            
+    evo.updateBestSpecimens(evo.pop_new)
 
     while(True):
         window.tmp_map = window.heightmap.copy()
