@@ -53,6 +53,7 @@ class Path:
             cv.line(mask, self.end_point.getPoint(), self.getPoint(self.length-1), 1, glob.rover_radius)
         else:
             cv.line(mask, self.start_point, self.end_point, 1, glob.rover_radius)
+            cv.line(mask, self.start_point.getPoint(), self.end_point.getPoint(), 1, glob.rover_radius)
         self.cost *= np.sum(cv.multiply(glob.variance_map, mask))
         if display:
             print 'Cost:', np.sum(masked), np.sum(mask), np.sum(glob.variance_map)
