@@ -50,62 +50,29 @@ class evolution:
         return tmp_path
 
 
-    def pathThreeBetter(self, path_1 = None, path_2 = None):   #Analizuje �ciezk� wybieraj�c lepsze pary punkt�w
+    def pathExchange(self, path_1 = None, path_2 = None):
         tmp_path = Path(self.path_length)
         tmp_path.start_point = path_1.start_point
         tmp_path.end_point = path_1.end_point
-        temp_three_1=Path(1)
-        temp_three_2=Path(1)
-        i = 0
 
-        temp_three_1.start_point=path_1.start_point
-        temp_three_2.start_point=path_2.start_point
+        mincost=1000000000
+        tmp_bestPath=Path(self.path_length)
+        tmp_bestPath.start_point = path_1.start_point
+        tmp_bestPath.end_point = path_1.end_point
 
-        temp_three_1.points[0]=path_1.points[0] 
-        temp_three_2.points[0]=path_2.points[0]
-
-        temp_three_1.end_point=path_1.points[1]
-        temp_three_2.end_point=path_2.points[1]
-
-        temp_three_1.calcCost()      
-        temp_three_2.calcCost()      
-
-        if temp_three_1.cost < temp_three_2.cost:
-            tmp_path.points[0] = path_1.points[0]
-            tmp_path.points[1] = path_1.points[1]
-
-        else:
-            tmp_path.points[0] = path_2.points[0]
-            tmp_path.points[1] = path_2.points[1]
-
-        
-        while i+2<path_1.length:
-            temp_three_1.start_point=path_1.points[i]
-            temp_three_2.start_point=path_2.points[i]
-
-            temp_three_1.points[0]=path_1.points[i+1] 
-            temp_three_2.points[0]=path_2.points[i+1] 
-
-            temp_three_1.end_point=path_1.points[i+2]
-            temp_three_2.end_point=path_2.points[i+2]
-
-            temp_three_1.calcCost()      
-            temp_three_2.calcCost()      
-
-            if temp_three_1.cost < temp_three_2.cost and i+2<tmp_path.length:
-                tmp_path.points[i+1] = path_1.points[i+1]
-                tmp_path.points[i+2] = path_1.points[i+2]
-
-            if temp_three_1.cost >= temp_three_2.cost and i+2<tmp_path.length:
-                tmp_path.points[i+1] = path_2.points[i+1]
-                tmp_path.points[i+2] = path_2.points[i+2]
-
-            i=i+2
-
+        for i in range(1,self.path_length-1):
+            for j in range(self.path_length):
+                if j < i:
+                    tmp_path.points[j]=path_1.points[j]
+                else:
+                    tmp_path.points[j]=path_2.points[j]
+            tmp_path.calcCost()
+            if tmp_path.cost < mincost:
+                mincost=tmp_path.cost
+                tmp_bestPath=tmp_path
+        tmp_path=tmp_bestPath
         tmp_path.calcCost()
-        
         return tmp_path
-
 
     def pathTwoBetter(self, path_1 = None, path_2 = None):   #Analizuje �ciezk� wybieraj�c lepsze punkty
         tmp_path = Path(self.path_length)
@@ -138,19 +105,40 @@ class evolution:
         temp_three_2=Path(1, calcCost = False)
         temp_cost=1000000000
         i = 0
+
+        temp_three_1.start_point=path_1.start_point
+        temp_three_2.start_point=path_2.start_point
+
+        temp_three_1.points[0]=path_1.points[0] 
+        temp_three_2.points[0]=path_2.points[0]
+
+        temp_three_1.end_point=path_1.points[1]
+        temp_three_2.end_point=path_2.points[1]
+
+        temp_three_1.calcCost()      
+        temp_three_2.calcCost()      
+
+        if temp_three_1.cost < temp_three_2.cost:
+            tmp_path.points[0] = path_1.points[0]
+            tmp_path.points[1] = path_1.points[1]
+
+        else:
+            tmp_path.points[0] = path_2.points[0]
+            tmp_path.points[1] = path_2.points[1]
+
+        
         while i < path_1.length-2:
-            temp_three_1.start_point=tmp_path.points[i]
-            temp_three_2.start_point=tmp_path.points[i]
+            temp_three_1.start_point=path_1.points[i]
+            temp_three_2.start_point=path_2.points[i]
 
-            temp_three_1.points[0]=tmp_path.points[i+1] #CZY INDEKS DOBRZE
-            temp_three_2.points[0]=tmp_path.points[i+1] #CZY DOBRZE INDEKS
-
+            temp_three_1.points[0]=path_1.points[i+1] 
+            temp_three_2.points[0]=path_2.points[i+1] 
 
             temp_three_1.end_point=path_1.points[i+2]
             temp_three_2.end_point=path_2.points[i+2]
 
-            temp_three_1.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
-            temp_three_2.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
+            temp_three_1.calcCost()      
+            temp_three_2.calcCost()      
 
             if temp_three_1.cost < temp_three_2.cost:
                 tmp_path.points[i+1] = path_1.points[i+1]
@@ -164,6 +152,8 @@ class evolution:
 
         tmp_path.calcCost()
         return tmp_path
+
+
 
 
 
