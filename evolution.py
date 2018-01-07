@@ -85,7 +85,7 @@ class evolution:
             temp_three_2.start_point=tmp_path.points[i]
 
             temp_three_1.points[1]=tmp_path.points[i+1] #CZY INDEKS DOBRZE
-            temp_three_2.points[1]=tmp_path.points[i+1]
+            temp_three_2.points[1]=tmp_path.points[i+1] #CZY DOBRZE INDEKS
 
             
             temp_three_1.end_point=path_1.points[i+2]
