@@ -29,10 +29,13 @@ class mainWindow:
     def drawPath(self, path, colour = None):   #Rysuje podana sciezke na tmp_map, bedziemy tez tego uzywac do maskowania obrazow i wyliczania funkcji kosztu
         if None == colour:
             colour = self.path_colour
-        cv.line(self.tmp_map, path.start_point.getPoint(), path.getPoint(0), colour, self.path_thickness)
-        for i in range(1, path.length):
-            cv.line(self.tmp_map, path.getPoint(i-1), path.getPoint(i), colour, self.path_thickness)
-        cv.line(self.tmp_map, path.end_point.getPoint(), path.getPoint(path.length-1), colour, self.path_thickness)
+        if path.length > 0:
+            cv.line(self.tmp_map, path.start_point.getPoint(), path.getPoint(0), colour, self.path_thickness)
+            for i in range(1, path.length):
+                cv.line(self.tmp_map, path.getPoint(i-1), path.getPoint(i), colour, self.path_thickness)
+            cv.line(self.tmp_map, path.end_point.getPoint(), path.getPoint(path.length-1), colour, self.path_thickness)
+        else:
+            cv.line(self.tmp_map, path.start_point.getPoint(), path.end_point.getPoint(), colour, self.path_thickness)
 
     def drawPop(self, _population): #Rysuje podana populacje na tmp_map
         # for i in range(0, len(_population.paths)):

@@ -105,6 +105,7 @@ class evolution:
             i=i+2
 
         tmp_path.calcCost()
+        print 'TMP_PATH', tmp_path.printPath()
         return tmp_path
 
 
