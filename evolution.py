@@ -105,19 +105,40 @@ class evolution:
         temp_three_2=Path(1, calcCost = False)
         temp_cost=1000000000
         i = 0
+
+        temp_three_1.start_point=path_1.start_point
+        temp_three_2.start_point=path_2.start_point
+
+        temp_three_1.points[0]=path_1.points[0] 
+        temp_three_2.points[0]=path_2.points[0]
+
+        temp_three_1.end_point=path_1.points[1]
+        temp_three_2.end_point=path_2.points[1]
+
+        temp_three_1.calcCost()      
+        temp_three_2.calcCost()      
+
+        if temp_three_1.cost < temp_three_2.cost:
+            tmp_path.points[0] = path_1.points[0]
+            tmp_path.points[1] = path_1.points[1]
+
+        else:
+            tmp_path.points[0] = path_2.points[0]
+            tmp_path.points[1] = path_2.points[1]
+
+        
         while i < path_1.length-2:
-            temp_three_1.start_point=tmp_path.points[i]
-            temp_three_2.start_point=tmp_path.points[i]
+            temp_three_1.start_point=path_1.points[i]
+            temp_three_2.start_point=path_2.points[i]
 
-            temp_three_1.points[0]=tmp_path.points[i+1] #CZY INDEKS DOBRZE
-            temp_three_2.points[0]=tmp_path.points[i+1] #CZY DOBRZE INDEKS
-
+            temp_three_1.points[0]=path_1.points[i+1] 
+            temp_three_2.points[0]=path_2.points[i+1] 
 
             temp_three_1.end_point=path_1.points[i+2]
             temp_three_2.end_point=path_2.points[i+2]
 
-            temp_three_1.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
-            temp_three_2.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
+            temp_three_1.calcCost()      
+            temp_three_2.calcCost()      
 
             if temp_three_1.cost < temp_three_2.cost:
                 tmp_path.points[i+1] = path_1.points[i+1]
@@ -131,6 +152,8 @@ class evolution:
 
         tmp_path.calcCost()
         return tmp_path
+
+
 
 
 
