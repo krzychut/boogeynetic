@@ -11,7 +11,7 @@ from path import Path
 from main_window import *
 from settings import *
 import glob
-
+                      
 if __name__ == '__main__':
     param = Parameters('data.txt')  #zawiera podstawowe parametry (opisana w settings)
     if 1 < len(sys.argv):

@@ -6,7 +6,7 @@ import math as math
 from point import *
 from settings import*
 import glob
-
+                    
 class Path:
     def __init__(self, n = 0, A = 1, B = 1, _start_point = Point(), _end_point = Point(-1, -1), calcCost = True):
         self.length = n #Ilosc wierzcholkow lamanej (nie liczymy punkto poczatkowego i startowego)

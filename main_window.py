@@ -8,7 +8,7 @@ from point import *
 from settings import *
 import time
 
-
+                         
 class mainWindow:
 
     def __init__(self,_map='terrain.png', _rover_radius = 5):
