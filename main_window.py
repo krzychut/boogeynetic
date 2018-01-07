@@ -19,7 +19,7 @@ class mainWindow:
         self.heightmap[:,:,2] = 1
         self.calcVariance(_rover_radius)
         self.window_name = 'Evolution'
-        self.mWindow = cv.namedWindow(self.window_name, cv.WINDOW_GUI_NORMAL)
+        self.mWindow = cv.namedWindow(self.window_name)
         self.maphandle = cv.imshow(self.window_name, self.tmp_map)
         self.key = -1
         esc = 27
@@ -38,7 +38,7 @@ class mainWindow:
             self.drawPath(path)
 
     def calcVariance(self, radius = 5):
-        var_window = cv.namedWindow("Variance", cv.WINDOW_GUI_NORMAL)
+        var_window = cv.namedWindow("Variance")
         b, g, r = cv.split(self.heightmap)
         # mask_img = np.zeros(self.heightmap.shape[:2], np.uint8)
         for i in range(0, self.height):

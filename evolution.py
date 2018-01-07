@@ -24,6 +24,8 @@ class evolution:
         self.best_specimens = [self.pop.paths[0], self.pop.paths[1], self.pop.paths[2]]
 
 #___PATH CROSSING___#
+
+
     def pathMean(self, path_1 = Path(), path_2 = Path()):   #Kazdy i-ty punkt nowej sciezki jest w polowie drogi pomiedzy i-tymi punktami sciezki 1 i 2
         tmp_path = Path(self.path_length)
         tmp_path.start_point = path_1.start_point
@@ -32,30 +34,30 @@ class evolution:
             tmp_path.points[i] = path_1.points[i].pointMean(path_2.points[i])
         tmp_path.calcCost()
         return tmp_path
-    
+
     def pathHalfChanger(self, path_1 = Path(), path_2 = Path()):   #zamienia polowkami
         k = randint(0,1)
         tmp_path = Path(self.path_length)
         tmp_path.start_point = path_1.start_point
         tmp_path.end_point = path_1.end_point
-        
+
         for i in range(int(k*0.5*path_1.length),int((k+1)*0.5*path_1.length)):
             tmp_path.points[i] = path_1.points[i].pointMean(path_2.points[i])
 
         for i in range(int((1-k)*0.5*path_1.length),int((2-k)*0.5*path_1.length)):
             tmp_path.points[i] = path_1.points[i].pointMean(path_2.points[i])
-            
+
         tmp_path.calcCost()
         return tmp_path
 
-    def pathTwoBetter(self, path_1 = Path(), path_2 = Path()):   #Analizuje œciezkê wybieraj¹c lepsze punkty
+    def pathTwoBetter(self, path_1 = Path(), path_2 = Path()):   #Analizuje ï¿½ciezkï¿½ wybierajï¿½c lepsze punkty
         tmp_path = Path(self.path_length)
         tmp_path.start_point = path_1.start_point
         tmp_path.end_point = path_1.end_point
         temp_twos_1=Path(0)
         temp_twos_2=Path(0)
         temp_cost=1000000000
-        
+
         for i in range(path_1.length-1):
             temp_twos_1.start_point=tmp_path.points[i]
             temp_twos_2.start_point=tmp_path.points[i]
@@ -63,7 +65,7 @@ class evolution:
             temp_twos_2.end_point=path_2.points[i+1]
             temp_twos_1.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
             temp_twos_2.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
-           
+
             if temp_twos_1.cost < temp_twos_2.cost:
                 tmp_path.points[i+1] = path_1.points[i+1]
             else:
@@ -72,7 +74,7 @@ class evolution:
         tmp_path.calcCost()
         return tmp_path
 
-    def pathThreeBetter(self, path_1 = Path(), path_2 = Path()):   #Analizuje œciezkê wybieraj¹c lepsze pary punktów
+    def pathThreeBetter(self, path_1 = Path(), path_2 = Path()):   #Analizuje ï¿½ciezkï¿½ wybierajï¿½c lepsze pary punktï¿½w
         tmp_path = Path(self.path_length)
         tmp_path.start_point = path_1.start_point
         tmp_path.end_point = path_1.end_point
@@ -87,17 +89,17 @@ class evolution:
             temp_three_1.points[0]=tmp_path.points[i+1] #CZY INDEKS DOBRZE
             temp_three_2.points[0]=tmp_path.points[i+1] #CZY DOBRZE INDEKS
 
-            
+
             temp_three_1.end_point=path_1.points[i+2]
             temp_three_2.end_point=path_2.points[i+2]
-            
+
             temp_three_1.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
             temp_three_2.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
-           
+
             if temp_twos_1.cost < temp_twos_2.cost:
                 tmp_path.points[i+1] = path_1.points[i+1]
                 tmp_path.points[i+2] = path_1.points[i+2]
-                
+
             else:
                 tmp_path.points[i+1] = path_2.points[i+1]
                 tmp_path.points[i+2] = path_2.points[i+2]
@@ -112,15 +114,27 @@ class evolution:
 
 
 #TODO: implement more crossing functions
+    def list2dict(self, crossingF_list): #konwersja listy w dictionary
+        self.crossingF_dict={}
+        for i in range(len(crossingF_list)):
+            if self.crossingF_list[i] == 'pathMean':
+                self.crossingF_dict[i] = self.pathMean
+            if self.crossingF_list[i] == 'pathHalfChanger':
+                self.crossingF_dict[i] = self.pathHalfChanger
+            if self.crossingF_list[i] == 'pathTwoBetter':
+                self.crossingF_dict[i] = self.pathTwoBetter
+            if self.crossingF_list[i] == 'pathThreeBetter':
+                self.crossingF_dict[i] = self.pathThreeBetter
 
 
-    def crossing(self, crossing_function):  #Tu jako argument podajemy funkcje krzyzujaca, np. pathMean(), wykonuje jedno krzyzowanie kazdej sciezki z kazda
+    def crossing(self, crossingF):  #Tu jako argument podajemy funkcje krzyzujaca, np. pathMean(), wykonuje jedno krzyzowanie kazdej sciezki z kazda
         self.pop_new = population()
+        rndindx=random.randint(0, len(self.crossingF)-1)
         for i in range(len(self.pop_selected.paths)):
             self.pop_new.insert(self.pop_selected.paths[i])
         for i in range(len(self.pop_selected.paths) - 1):
             for j in range(i+1, len(self.pop_selected.paths)):
-                tmp_path = self.pathMean(self.pop_selected.paths[i], self.pop_selected.paths[j])
+                tmp_path = self.crossingF[rndindx](self.pop_selected.paths[i], self.pop_selected.paths[j])
                 self.pop_new.insert(tmp_path)
         if DEBUG:
             print 'Population after crossing:', len(self.pop_new.paths)
