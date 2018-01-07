@@ -1,3 +1,4 @@
+# -*- coding: cp1250 -*-
 import copy
 import cv2 as cv
 import numpy as np
@@ -44,6 +45,30 @@ class evolution:
         for i in range(int((1-k)*0.5*path_1.length),int((2-k)*0.5*path_1.length)):
             tmp_path.points[i] = path_1.points[i].pointMean(path_2.points[i])
             
+        tmp_path.calcCost()
+        return tmp_path
+
+    def pathTwoBetter(self, path_1 = Path(), path_2 = Path()):   #Analizuje œciezkê wybieraj¹c lepsze punkty
+        tmp_path = Path(self.path_length)
+        tmp_path.start_point = path_1.start_point
+        tmp_path.end_point = path_1.end_point
+        temp_twos_1=Path(0)
+        temp_twos1_2=Path(0)
+        temp_cost=1000000000
+        
+        for i in range(path_1.length-1):
+            temp_twos_1.start_point=tmp_path.points[i]
+            temp_twos_2.start_point=tmp_path.points[i]
+            temp_twos_1.end_point=path_1.points[i+1]
+            temp_twos_2.end_point=path_2.points[i+1]
+            temp_twos_1.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
+            temp_twos_2.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
+           
+            if temp_twos_1.cost < temp_twos_2.cost:
+                tmp_path.points[i+1] = path_1.points[i+1]
+            else:
+                tmp_path.points[i+1] = path_2.points[i+1]
+
         tmp_path.calcCost()
         return tmp_path
 

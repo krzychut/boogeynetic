@@ -38,7 +38,7 @@ if __name__ == '__main__':
     _height = window.height,
     _width = window.width)  #To zawiera populacje stara, populacje po selekcji i populacje po krzyzowaniu + funkcje do tego
     evo.selection() #Tu selekcja wedlug rozkladu wykladniczego
-    evo.crossing(evo.pathMean)  #Tu krzyzowanie. Jako parametr przyjmuje funkcje krzyzujaca, trzeba wiecej takich napisac
+    evo.crossing(evo.pathTwoBetter)  #Tu krzyzowanie. Jako parametr przyjmuje funkcje krzyzujaca, trzeba wiecej takich napisac
     evo.clearRepeatingSpecimens()   #Usuwa powtorzenia z populacji po krzyzowaniu
     evo.adjustPopulation(pop_count) #Dodaje losowe sciezki albo usuwa najgorsze z nowej populacji, zeby bylo ich tyle co przed selekcja
     evo.updateBestSpecimens(evo.pop_new)
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         elif window.key == v_key:
             evo.nextGeneration()    #Stara populacja jest nadpisana przez nowa, pozostale populacje sa czyszczone
             evo.selection()
-            evo.crossing(evo.pathHalfChanger)
+            evo.crossing(evo.pathTwoBetter)   # TEZ CROSSING! DOBRZE BY BYLO USTAWIC PARAMETR FUNKCJI CROSSING JAKOS GLOBALNIE
             evo.clearRepeatingSpecimens()
             evo.adjustPopulation(pop_count)
             # evo.pop_new.showPopStats()
