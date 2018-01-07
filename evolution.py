@@ -117,24 +117,25 @@ class evolution:
     def list2dict(self, crossingF_list): #konwersja listy w dictionary
         self.crossingF_dict={}
         for i in range(len(crossingF_list)):
-            if self.crossingF_list[i] == 'pathMean':
+            if crossingF_list[i] == 'pathMean':
                 self.crossingF_dict[i] = self.pathMean
-            if self.crossingF_list[i] == 'pathHalfChanger':
+            if crossingF_list[i] == 'pathHalfChanger':
                 self.crossingF_dict[i] = self.pathHalfChanger
-            if self.crossingF_list[i] == 'pathTwoBetter':
+            if crossingF_list[i] == 'pathTwoBetter':
                 self.crossingF_dict[i] = self.pathTwoBetter
-            if self.crossingF_list[i] == 'pathThreeBetter':
+            if crossingF_list[i] == 'pathThreeBetter':
                 self.crossingF_dict[i] = self.pathThreeBetter
 
 
-    def crossing(self, crossingF):  #Tu jako argument podajemy funkcje krzyzujaca, np. pathMean(), wykonuje jedno krzyzowanie kazdej sciezki z kazda
+    def crossing(self):  #tu krzyzuje randomowym operatorem z podanych w data.txt patrz list2dict
         self.pop_new = population()
-        rndindx=random.randint(0, len(self.crossingF)-1)
+        rndindx=randint(1, len(self.crossingF_dict))
+        print self.crossingF_dict[rndindx]
         for i in range(len(self.pop_selected.paths)):
             self.pop_new.insert(self.pop_selected.paths[i])
         for i in range(len(self.pop_selected.paths) - 1):
             for j in range(i+1, len(self.pop_selected.paths)):
-                tmp_path = self.crossingF[rndindx](self.pop_selected.paths[i], self.pop_selected.paths[j])
+                tmp_path = self.crossingF_dict[rndindx](self.pop_selected.paths[i], self.pop_selected.paths[j])
                 self.pop_new.insert(tmp_path)
         if DEBUG:
             print 'Population after crossing:', len(self.pop_new.paths)

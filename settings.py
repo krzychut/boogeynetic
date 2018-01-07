@@ -28,6 +28,7 @@ class Parameters:
         self.file=data#lokalizacja danych
         self.beta=0#beta rozk�ady wyk�adniczego
         self.top_percent = 1
+        self.crossingF='pathMean' #wektor operatorów
  #---------------------------------------------------------------------
     def getNodNum(self,num):   #pobiera liczbe wezlow
         self.n=num
@@ -49,6 +50,12 @@ class Parameters:
         self.beta=num
     def getBetaKeypad(self):    #pobiera bete z klawiatury
         self.beta=input('Podaj bete: ')
+#-------------------------------------------------------------------------
+
+    def getcrossingF(self,num):   #pobiera wektro operatorów krzyzowania
+        self.crossingF=num
+    def getcrossingFKeypad(self):    #tu nie wiem jak sie podaje te dict ~michalek
+        self.crossingF=input('Podaj Funkcje krzyzowania: ')
 
   #------------------------------------------------------------------------
     def NumOfPack(self):#zwraca ilosc zestaw�w danych
@@ -57,11 +64,15 @@ class Parameters:
         return count
     def SetPack(self,number):#ustawia zestaw parametr�w z pliku
         wiersz = linecache.getline(self.file, number+2)
-        self.n,self.pop_count,self.map,self.beta,self.top_percent,rest=wiersz.split(' ') #UWAGA, rest jest poprzebne bo inaczej do s�owa wrzuca znak nowej lini
+        str_vec=wiersz.split(' ')
+        self.n,self.pop_count,self.map,self.beta,self.top_percent=str_vec[0:5]#pierwsze 5 parametrów wczytane
+        self.crossingF=str_vec[5:]#pozostałe elementy czyli wektor operatorow krzyzowania plu 'END'
+        del self.crossingF[-1]#usuwanie 'END'
         l=len(self.map)
         self.map=self.map[1:l-1]
         self.n=int(float(self.n))
         self.pop_count=int(float(self.pop_count))
         self.beta=int(float(self.beta))
+        print self.crossingF[1]
 
         return wiersz
