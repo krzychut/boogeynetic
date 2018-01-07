@@ -5,12 +5,12 @@ import numpy as np
 from random import randint
 import math as math
 import sys
-from evolution import *
-from population import *
-from path import *
-from point import *
+from evolution import evolution
+from population import population
+from path import Path
 from main_window import *
 from settings import *
+import glob
 
 if __name__ == '__main__':
     param = Parameters('data.txt')  #zawiera podstawowe parametry (opisana w settings)
@@ -24,9 +24,11 @@ if __name__ == '__main__':
             param.SetPack(1)
     else:
         print "No argument passed. Using default parameter set: 1"
-        param.SetPack(3)
+        param.SetPack(1)
 
     window = mainWindow(param.map)   #Zawiera mape (3 kanaly, na razie wykorzystany 1, zajme sie jeszcze terenem i mapa kosztow - Chuti)
+    glob.variance_map = window.heightmap[:,:,1]
+    print glob.variance_map.dtype
     n = param.n   #Liczba wierzcholkow lamanej
     pop_count = param.pop_count    #Liczba populacji
     # exp_beta=param.beta#beta rozk�adu wykladniczego
@@ -60,6 +62,8 @@ if __name__ == '__main__':
             if DEBUG:
                 print 'Showing crossed population'
             window.drawPop(evo.pop_new)
+            for path in evo.best_specimens:
+                window.drawPath(path, [0, 255, 0])
         elif window.key == v_key:
             evo.nextGeneration()    #Stara populacja jest nadpisana przez nowa, pozostale populacje sa czyszczone
             evo.selection()
@@ -69,11 +73,13 @@ if __name__ == '__main__':
             # evo.pop_new.showPopStats()
             evo.updateBestSpecimens(evo.pop_new)    #Odswieza liste trzech najlepszych rozwiazan
             print "Best Path:", evo.pop_new.paths[0].printPath()    #printPath() Wypisuje kolejne punkty sciezki, tylko do debuggingu
-            print "Worst Path:", evo.pop_new.paths[len(evo.pop_new.paths) - 1].printPath()
+            print "Worst Path:", evo.pop_new.paths[-1].printPath()
         print "Best Specimen Costs: ", evo.best_specimens[0].cost, evo.best_specimens[1].cost, evo.best_specimens[2].cost
         for spec in evo.best_specimens:
             print "Best specimen:"
             spec.printPath()
+        print 'Generation:', evo.generation_counter
+        print 'Best cost history:', evo.best_cost_history, '\n========================================================='
         cv.imshow(window.window_name, window.tmp_map) #Tutaj odswiezany jest wyswietlany obrazek, tzn. tmp_map z naniesionymi sciezkami pojawia sie na ekranie
         window.key = cv.waitKey(0) #To musi byc po kazdym imshow(), czeka na input z klawiatury. Parametr to czas czekania, 0 oznacza nieskonczonosc
 

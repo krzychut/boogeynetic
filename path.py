@@ -5,21 +5,23 @@ from random import randint
 import math as math
 from point import *
 from settings import*
+import glob
 
 class Path:
-    def __init__(self, n = 0, A = 1, B = 1, _start_point = Point(), _end_point = Point(-1, -1)):
+    def __init__(self, n = 0, A = 1, B = 1, _start_point = Point(), _end_point = Point(-1, -1), calcCost = True):
         self.length = n #Ilosc wierzcholkow lamanej (nie liczymy punkto poczatkowego i startowego)
-        self.points = [Point(randint(0, A-1), randint(0, B-1)) for _ in range(self.length)]
-        if 0 < _end_point.x < A and 0 < _end_point.y < B:
+        self.points = [Point(randint(0, B-1), randint(0, A-1)) for _ in range(self.length)]
+        if 0 < _end_point.x < B and 0 < _end_point.y < A:
             self.end_point = Point(_end_point.x, _end_point.y)
         else:
-            self.end_point = Point(A-1, B-1)
-        if 0 < _start_point.x < A and 0 < _start_point.y < B:
+            self.end_point = Point(B-1, A-1)
+        if 0 < _start_point.x < B and 0 < _start_point.y < A:
             self.start_point(_start_point.x, _start_point.y)
         else:
             self.start_point = Point(0, 0)
         self.cost = 0
-        self.calcCost()
+        if calcCost:
+            self.calcCost()
 
     def getPoint(self, i = 0):  #Zwraca wspolrzedne wierzcholka jako tuple. Syntax: x, y = path.getPoint(index)
         if i >= self.length:
@@ -29,7 +31,8 @@ class Path:
             return x, y
 
 #TODO: Implement variance calculation
-    def calcCost(self, terrain = None):   #Oblicza funkcje kosztu. Dopisze jeszcze liczenie wariancji - Chuti
+    def calcCost(self, terrain = None, display = False):   #Oblicza funkcje kosztu. Dopisze jeszcze liczenie wariancji - Chuti
+        #Length
         if self.length > 0:
             self.cost += math.sqrt(pow(self.points[0].x - self.start_point.x, 2) +\
             pow(self.points[0].y - self.start_point.y, 2))
@@ -41,6 +44,19 @@ class Path:
         else:
             self.cost += math.sqrt(pow(self.end_point.x - self.start_point.x, 2) +\
             pow(self.end_point.y - self.start_point.y, 2))
+        #Variance
+        mask = np.zeros(glob.variance_map.shape, dtype = glob.variance_map.dtype)
+        cv.line(mask, self.start_point.getPoint(), self.getPoint(0), 1, glob.rover_radius)
+        for i in range(1, self.length):
+            cv.line(mask, self.getPoint(i-1), self.getPoint(i), 1, glob.rover_radius)
+        cv.line(mask, self.end_point.getPoint(), self.getPoint(self.length-1), 1, glob.rover_radius)
+        self.cost *= np.sum(cv.multiply(glob.variance_map, mask))
+        if display:
+            print 'Cost:', np.sum(masked), np.sum(mask), np.sum(glob.variance_map)
+            if np.sum(mask) < 20:
+                self.printPath()
+            cv.imshow("Masked", masked)
+            cv.waitKey(16)
 
     def isEqual(self, path = None): #Zwraca True, jesli sciezki sa identyczne (tzn. identyczne wspolrzedne kolejnych wierzcholkow), w przeciwnym razie False
         if None == path:
