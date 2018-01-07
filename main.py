@@ -24,7 +24,7 @@ if __name__ == '__main__':
             param.SetPack(1)
     else:
         print "No argument passed. Using default parameter set: 1"
-        param.SetPack(2)
+        param.SetPack(1)
 
     window = mainWindow(param.map)   #Zawiera mape (3 kanaly, na razie wykorzystany 1, zajme sie jeszcze terenem i mapa kosztow - Chuti)
     glob.variance_map = window.heightmap[:,:,1]

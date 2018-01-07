@@ -46,10 +46,14 @@ class Path:
             pow(self.end_point.y - self.start_point.y, 2))
         #Variance
         mask = np.zeros(glob.variance_map.shape, dtype = glob.variance_map.dtype)
-        cv.line(mask, self.start_point.getPoint(), self.getPoint(0), 1, glob.rover_radius)
-        for i in range(1, self.length):
-            cv.line(mask, self.getPoint(i-1), self.getPoint(i), 1, glob.rover_radius)
-        cv.line(mask, self.end_point.getPoint(), self.getPoint(self.length-1), 1, glob.rover_radius)
+        if self.length > 0:
+            cv.line(mask, self.start_point.getPoint(), self.getPoint(0), 1, glob.rover_radius)
+            for i in range(1, self.length):
+                cv.line(mask, self.getPoint(i-1), self.getPoint(i), 1, glob.rover_radius)
+            cv.line(mask, self.end_point.getPoint(), self.getPoint(self.length-1), 1, glob.rover_radius)
+        else:
+            cv.line(mask, self.start_point, self.end_point, 1, glob.rover_radius)
+            cv.line(mask, self.start_point.getPoint(), self.end_point.getPoint(), 1, glob.rover_radius)
         self.cost *= np.sum(cv.multiply(glob.variance_map, mask))
         if display:
             print 'Cost:', np.sum(masked), np.sum(mask), np.sum(glob.variance_map)
