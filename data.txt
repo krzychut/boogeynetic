@@ -1,4 +1,5 @@
-n pop_count map beta
+n pop_count map beta top_percent
 ###################################
-1 100 'terrain.png' 3 
-5 100 'terrain.png' 4 
+1 100 'terrain.png' 3 1 END
+5 100 'terrain.png' 4 5 END
+5 1000 'terrain.png' 3 1 END
