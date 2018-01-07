@@ -73,6 +73,6 @@ class Parameters:
         self.n=int(float(self.n))
         self.pop_count=int(float(self.pop_count))
         self.beta=int(float(self.beta))
-        print self.crossingF[1]
+        print self.crossingF[0:]
 
         return wiersz

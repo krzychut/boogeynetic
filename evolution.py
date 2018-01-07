@@ -129,7 +129,7 @@ class evolution:
 
     def crossing(self):  #tu krzyzuje randomowym operatorem z podanych w data.txt patrz list2dict
         self.pop_new = population()
-        rndindx=randint(1, len(self.crossingF_dict))
+        rndindx=randint(0, len(self.crossingF_dict)-1) #wybiera randomowo jeden ze wskazanych operatorów
         print self.crossingF_dict[rndindx]
         for i in range(len(self.pop_selected.paths)):
             self.pop_new.insert(self.pop_selected.paths[i])
