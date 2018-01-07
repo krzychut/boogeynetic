@@ -49,6 +49,31 @@ class evolution:
         tmp_path.calcCost()
         return tmp_path
 
+
+    def pathExchange(self, path_1 = None, path_2 = None):
+        tmp_path = Path(self.path_length)
+        tmp_path.start_point = path_1.start_point
+        tmp_path.end_point = path_1.end_point
+
+        mincost=1000000000
+        tmp_bestPath=Path(self.path_length)
+        tmp_bestPath.start_point = path_1.start_point
+        tmp_bestPath.end_point = path_1.end_point
+
+        for i in range(1,self.path_length-1):
+            for j in range(self.path_length):
+                if j < i:
+                    tmp_path.points[j]=path_1.points[j]
+                else:
+                    tmp_path.points[j]=path_2.points[j]
+            tmp_path.calcCost()
+            if tmp_path.cost < mincost:
+                mincost=tmp_path.cost
+                tmp_bestPath=tmp_path
+        tmp_path=tmp_bestPath
+        tmp_path.calcCost()
+        return tmp_path
+
     def pathTwoBetter(self, path_1 = None, path_2 = None):   #Analizuje �ciezk� wybieraj�c lepsze punkty
         tmp_path = Path(self.path_length)
         tmp_path.start_point = path_1.start_point
@@ -105,7 +130,6 @@ class evolution:
             i=i+2
 
         tmp_path.calcCost()
-        print 'TMP_PATH', tmp_path.printPath()
         return tmp_path
 
 
@@ -124,6 +148,8 @@ class evolution:
                 self.crossingF_dict[i] = self.pathTwoBetter
             if crossingF_list[i] == 'pathThreeBetter':
                 self.crossingF_dict[i] = self.pathThreeBetter
+            if crossingF_list[i] == 'pathExchange':
+                self.crossingF_dict[i] = self.pathExchange
 
 
     def crossing(self):  #tu krzyzuje randomowym operatorem z podanych w data.txt patrz list2dict
