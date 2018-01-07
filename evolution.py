@@ -31,6 +31,26 @@ class evolution:
             tmp_path.points[i] = path_1.points[i].pointMean(path_2.points[i])
         tmp_path.calcCost()
         return tmp_path
+    
+    def pathHalfChanger(self, path_1 = Path(), path_2 = Path()):   #zamienia polowkami
+        k = randint(0,1)
+        tmp_path = Path(self.path_length)
+        tmp_path.start_point = path_1.start_point
+        tmp_path.end_point = path_1.end_point
+        
+        for i in range(int(k*0.5*path_1.length),int((k+1)*0.5*path_1.length)):
+            tmp_path.points[i] = path_1.points[i].pointMean(path_2.points[i])
+
+        for i in range(int((1-k)*0.5*path_1.length),int((2-k)*0.5*path_1.length)):
+            tmp_path.points[i] = path_1.points[i].pointMean(path_2.points[i])
+            
+        tmp_path.calcCost()
+        return tmp_path
+
+
+
+
+
 
 #TODO: implement more crossing functions
 

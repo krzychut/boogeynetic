@@ -24,7 +24,7 @@ if __name__ == '__main__':
             param.SetPack(1)
     else:
         print "No argument passed. Using default parameter set: 1"
-        param.SetPack(1)
+        param.SetPack(2)
 
     window = mainWindow(param.map)   #Zawiera mape (3 kanaly, na razie wykorzystany 1, zajme sie jeszcze terenem i mapa kosztow - Chuti)
     n = param.n   #Liczba wierzcholkow lamanej
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         elif window.key == v_key:
             evo.nextGeneration()    #Stara populacja jest nadpisana przez nowa, pozostale populacje sa czyszczone
             evo.selection()
-            evo.crossing(evo.pathMean)
+            evo.crossing(evo.pathHalfChanger)
             evo.clearRepeatingSpecimens()
             evo.adjustPopulation(pop_count)
             # evo.pop_new.showPopStats()
