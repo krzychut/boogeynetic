@@ -14,7 +14,8 @@ class population:
         for i in range(0, _pop_count):
             self.insert(Path(_n, _height, _width))
         if DEBUG:
-            self.showPopStats()
+            pass
+            # self.showPopStats()
 
     def insert(self, _path):    #Wstawia podana sciezke do populacji tak, sciezki byly posortowane od najlepszej do najgorszej. Sciezki wstawiamy TYLKO z uzyciem tej funkcji, inaczej bedzie syf.
         if len(self.paths) == 0:

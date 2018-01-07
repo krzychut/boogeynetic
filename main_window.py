@@ -26,11 +26,16 @@ class mainWindow:
         self.path_colour = [0, 0, 255]
         self.path_thickness = 2
 
-    def drawPath(self, path):   #Rysuje podana sciezke na tmp_map, bedziemy tez tego uzywac do maskowania obrazow i wyliczania funkcji kosztu
-        cv.line(self.tmp_map, path.start_point.getPoint(), path.getPoint(0), self.path_colour, self.path_thickness)
-        for i in range(1, path.length):
-            cv.line(self.tmp_map, path.getPoint(i-1), path.getPoint(i), self.path_colour, self.path_thickness)
-        cv.line(self.tmp_map, path.end_point.getPoint(), path.getPoint(path.length-1), self.path_colour, self.path_thickness)
+    def drawPath(self, path, colour = None):   #Rysuje podana sciezke na tmp_map, bedziemy tez tego uzywac do maskowania obrazow i wyliczania funkcji kosztu
+        if None == colour:
+            colour = self.path_colour
+        if path.length > 0:
+            cv.line(self.tmp_map, path.start_point.getPoint(), path.getPoint(0), colour, self.path_thickness)
+            for i in range(1, path.length):
+                cv.line(self.tmp_map, path.getPoint(i-1), path.getPoint(i), colour, self.path_thickness)
+            cv.line(self.tmp_map, path.end_point.getPoint(), path.getPoint(path.length-1), colour, self.path_thickness)
+        else:
+            cv.line(self.tmp_map, path.start_point.getPoint(), path.end_point.getPoint(), colour, self.path_thickness)
 
     def drawPop(self, _population): #Rysuje podana populacje na tmp_map
         # for i in range(0, len(_population.paths)):
@@ -48,8 +53,8 @@ class mainWindow:
                 mask1 = (x1-j)*(x1-j) + (y1-i)*(y1-i) < radius*radius
                 mask_img = np.zeros((len(y1), len(x1[0])), np.uint8)
                 mask_img[mask1] = 1
-                tmp = b[x1, y1]
+                tmp = b[y1, x1]
                 mean, stddev = cv.meanStdDev(src = tmp, mask = mask_img)
-                self.heightmap[j, i, 1] = stddev
+                self.heightmap[i, j, 1] = stddev
             cv.imshow("Variance", self.heightmap[:,:,1])
             cv.waitKey(1)

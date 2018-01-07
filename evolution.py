@@ -8,7 +8,6 @@ from population import *
 from path import *
 from point import *
 from settings import*
-
 class evolution:
 #___CONSTRUCTORS___#
     def __init__(self,_exp_beta=3, _top_percent = 1, _pop_count = 0, _n = 0, _height = 0, _width = 0, _start_point = Point(), _end_point = Point(-1, -1)):
@@ -21,13 +20,13 @@ class evolution:
         self.width = _width
         self.exp_beta = _exp_beta   #Wspolczynnik ksztaltu rozkladu wykladniczego do selekcji. Dla 1000 osobnikow dziala calkiem dobrze. Do konfiguraji w settings.py - SKONFIGUROWANO
         self.top_percent = 1    #Tyle procent najlepszych sciezek zawsze przechodzi selekcje, bedzie pewnie zmienna globalna w settings.py
-        self.best_specimens = [self.pop.paths[0], self.pop.paths[1], self.pop.paths[2]]
+        self.best_specimens = [self.pop.paths[-1], self.pop.paths[-1], self.pop.paths[-1]]
+        self.generation_counter = 0
+        self.best_cost_history = [-1, -1, -1]
 
 #___PATH CROSSING___#
-
-
-    def pathMean(self, path_1 = Path(), path_2 = Path()):   #Kazdy i-ty punkt nowej sciezki jest w polowie drogi pomiedzy i-tymi punktami sciezki 1 i 2
-        tmp_path = Path(self.path_length)
+    def pathMean(self, path_1 = None, path_2 = None):   #Kazdy i-ty punkt nowej sciezki jest w polowie drogi pomiedzy i-tymi punktami sciezki 1 i 2
+        tmp_path = Path(self.path_length, calcCost = False)
         tmp_path.start_point = path_1.start_point
         tmp_path.end_point = path_1.end_point
         for i in range(path_1.length):
@@ -35,7 +34,7 @@ class evolution:
         tmp_path.calcCost()
         return tmp_path
 
-    def pathHalfChanger(self, path_1 = Path(), path_2 = Path()):   #zamienia polowkami
+    def pathHalfChanger(self, path_1 = None, path_2 = None):   #zamienia polowkami
         k = randint(0,1)
         tmp_path = Path(self.path_length)
         tmp_path.start_point = path_1.start_point
@@ -50,7 +49,7 @@ class evolution:
         tmp_path.calcCost()
         return tmp_path
 
-    def pathTwoBetter(self, path_1 = Path(), path_2 = Path()):   #Analizuje �ciezk� wybieraj�c lepsze punkty
+    def pathTwoBetter(self, path_1 = None, path_2 = None):   #Analizuje �ciezk� wybieraj�c lepsze punkty
         tmp_path = Path(self.path_length)
         tmp_path.start_point = path_1.start_point
         tmp_path.end_point = path_1.end_point
@@ -74,41 +73,62 @@ class evolution:
         tmp_path.calcCost()
         return tmp_path
 
-    def pathThreeBetter(self, path_1 = Path(), path_2 = Path()):   #Analizuje �ciezk� wybieraj�c lepsze pary punkt�w
+    
+    def pathThreeBetter(self, path_1 = None, path_2 = None):   #Analizuje �ciezk� wybieraj�c lepsze pary punkt�w
         tmp_path = Path(self.path_length)
         tmp_path.start_point = path_1.start_point
         tmp_path.end_point = path_1.end_point
         temp_three_1=Path(1)
         temp_three_2=Path(1)
-        temp_cost=1000000000
         i = 0
-        while i < path_1.length-2:
-            temp_three_1.start_point=tmp_path.points[i]
-            temp_three_2.start_point=tmp_path.points[i]
 
-            temp_three_1.points[0]=tmp_path.points[i+1] #CZY INDEKS DOBRZE
-            temp_three_2.points[0]=tmp_path.points[i+1] #CZY DOBRZE INDEKS
+        temp_three_1.start_point=path_1.start_point
+        temp_three_2.start_point=path_2.start_point
 
+        temp_three_1.points[0]=path_1.points[0] 
+        temp_three_2.points[0]=path_2.points[0]
+
+        temp_three_1.end_point=path_1.points[1]
+        temp_three_2.end_point=path_2.points[1]
+
+        temp_three_1.calcCost()      
+        temp_three_2.calcCost()      
+
+        if temp_three_1.cost < temp_three_2.cost:
+            tmp_path.points[0] = path_1.points[0]
+            tmp_path.points[1] = path_1.points[1]
+
+        else:
+            tmp_path.points[0] = path_2.points[0]
+            tmp_path.points[1] = path_2.points[1]
+
+        
+        while i+2<path_1.length:
+            temp_three_1.start_point=path_1.points[i]
+            temp_three_2.start_point=path_2.points[i]
+
+            temp_three_1.points[0]=path_1.points[i+1] 
+            temp_three_2.points[0]=path_2.points[i+1] 
 
             temp_three_1.end_point=path_1.points[i+2]
             temp_three_2.end_point=path_2.points[i+2]
 
-            temp_three_1.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
-            temp_three_2.calcCost()      #JAK UWZGLEDNIC MAPE?????????????????
+            temp_three_1.calcCost()      
+            temp_three_2.calcCost()      
 
-            if temp_twos_1.cost < temp_twos_2.cost:
+            if temp_three_1.cost < temp_three_2.cost and i+2<tmp_path.length:
                 tmp_path.points[i+1] = path_1.points[i+1]
                 tmp_path.points[i+2] = path_1.points[i+2]
 
-            else:
+            if temp_three_1.cost >= temp_three_2.cost and i+2<tmp_path.length:
                 tmp_path.points[i+1] = path_2.points[i+1]
                 tmp_path.points[i+2] = path_2.points[i+2]
 
             i=i+2
 
         tmp_path.calcCost()
+        
         return tmp_path
-
 
 
 
@@ -170,6 +190,9 @@ class evolution:
         self.pop_new.paths = []
         self.pop_selected.paths = []
         self.pop_count = len(self.pop.paths)
+        self.generation_counter += 1
+        self.best_cost_history[1:] = self.best_cost_history[0:2]
+        self.best_cost_history[0] = self.best_specimens[0].cost
 
     def updateBestSpecimens(self, pop_to_check = None): #Odswieza liste najlepszych osobnikow, najlepiej to robic po usunieciu duplikatow i wyrownaniu populacji pop_new
         if None == pop_to_check:
@@ -178,9 +201,9 @@ class evolution:
             for path in pop_to_check.paths: #Przydatna konstrukcja w pythonie, dziala praktycznie z kazda lista. Jesli cos jest postaci X = [x1, x2, x3...], mozna tak robic
                 if path.cost < self.best_specimens[0].cost:
                     self.best_specimens[0] = copy.deepcopy(path)
-                elif path.cost < self.best_specimens[1].cost:
+                elif path.cost < self.best_specimens[1].cost and path.cost != self.best_specimens[0].cost:
                     self.best_specimens[1] = copy.deepcopy(path)
-                elif path.cost < self.best_specimens[2].cost:
+                elif path.cost < self.best_specimens[2].cost and path.cost != self.best_specimens[1].cost and path.cost != self.best_specimens[0].cost:
                     self.best_specimens[2] = copy.deepcopy(path)
                 else:
                     break
