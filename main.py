@@ -11,6 +11,7 @@ from path import Path
 from main_window import *
 from settings import *
 import glob
+import csv
 
 if __name__ == '__main__':
     param = Parameters('data.txt')  #zawiera podstawowe parametry (opisana w settings)
@@ -24,7 +25,7 @@ if __name__ == '__main__':
             param.SetPack(1)
     else:
         print "No argument passed. Using default parameter set: 1"
-        param.SetPack(1)
+        param.SetPack(2)
 
     window = mainWindow(param.map)   #Zawiera mape (3 kanaly, na razie wykorzystany 1, zajme sie jeszcze terenem i mapa kosztow - Chuti)
     glob.variance_map = window.heightmap[:,:,1]
@@ -45,6 +46,12 @@ if __name__ == '__main__':
     evo.clearRepeatingSpecimens()   #Usuwa powtorzenia z populacji po krzyzowaniu
     evo.adjustPopulation(pop_count) #Dodaje losowe sciezki albo usuwa najgorsze z nowej populacji, zeby bylo ich tyle co przed selekcja
     evo.updateBestSpecimens(evo.pop_new)
+
+    csv_file=open("output_data.csv",'wb')# Plik w ktorym beda dane z testu
+    wr=csv.writer(csv_file)     #PROSTY ZAPIS DO PLIKU CSV
+    wr.writerow(["_exp_beta","_top_percent","pop_count","_n","_height","_width"])
+    wr.writerow([param.beta,param.top_percent,param.pop_count,param.n,window.height,window.width])
+    wr.writerow(["POPULACJA","b_cost_0","b_cost_1",""])
 
     while(True):
         window.tmp_map = window.heightmap.copy()
@@ -80,7 +87,13 @@ if __name__ == '__main__':
             spec.printPath()
         print 'Generation:', evo.generation_counter
         print 'Best cost history:', evo.best_cost_history, '\n========================================================='
+
+        l=[evo.generation_counter,evo.best_cost_history[0],evo.best_cost_history[1],evo.best_cost_history[2]]# ELEMENTY DO ZAPISU DO PLIKU
+        wr.writerow(l)
+        
+
         cv.imshow(window.window_name, window.tmp_map) #Tutaj odswiezany jest wyswietlany obrazek, tzn. tmp_map z naniesionymi sciezkami pojawia sie na ekranie
         window.key = cv.waitKey(0) #To musi byc po kazdym imshow(), czeka na input z klawiatury. Parametr to czas czekania, 0 oznacza nieskonczonosc
 
+    csv_file.close()
     cv.destroyAllWindows()  #Po zakonczeniu programu (klawisz 'q') zamyka okienka zeby nie bylo segfaultow

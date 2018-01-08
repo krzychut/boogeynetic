@@ -1,6 +1,6 @@
 n pop_count map beta top_percent crossingF
 ###################################
-5 100 'terrain.png' 3 1 pathThreeBetter END
-5 100 'map1.jpg' 4 5 pathExchange pathMean END
+ 1000 'terrain.png' 3 1 pathMean pathTwoBetter END
+10 100 'map1.jpg' 4 5 pathExchange pathMean pathThreeBetter pathTwoBetterEND
 =======
 100 100 'terrain.png' 3 1 pathMean pathThreeBetter END
