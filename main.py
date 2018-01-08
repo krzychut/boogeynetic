@@ -12,6 +12,7 @@ from main_window import *
 from settings import *
 import glob
 import time
+import csv
 
 if __name__ == '__main__':
 #___READING PARAMETERS___#
@@ -52,6 +53,12 @@ if __name__ == '__main__':
     evo.updateBestSpecimens(evo.pop_new)
     gen_time_elapsed = time.time() - gen_time_elapsed
 
+    csv_file=open("output_data.csv",'wb')# Plik w ktorym beda dane z testu
+    wr=csv.writer(csv_file)     #PROSTY ZAPIS DO PLIKU CSV
+    wr.writerow(["_exp_beta","_top_percent","pop_count","_n","_height","_width"])
+    wr.writerow([param.beta,param.top_percent,param.pop_count,param.n,window.height,window.width])
+    wr.writerow(["POPULACJA","b_cost_0","b_cost_1",""])
+
 #___MAIN LOOP___#
     while(True):
         window.tmp_map = window.heightmap.copy()
@@ -89,7 +96,9 @@ if __name__ == '__main__':
             window.drawPath(path, [0, 255, 0])
         print 'Generation:', evo.generation_counter, ' | Elapsed time:', gen_time_elapsed, 'seconds'
         print 'Best cost history:', evo.best_cost_history, '\n========================================================='
+        l=[evo.generation_counter,evo.best_cost_history[0],evo.best_cost_history[1],evo.best_cost_history[2]]# ELEMENTY DO ZAPISU DO PLIKU
+        wr.writerow(l)
         cv.imshow(window.window_name, window.tmp_map) #Tutaj odswiezany jest wyswietlany obrazek, tzn. tmp_map z naniesionymi sciezkami pojawia sie na ekranie
         window.key = cv.waitKey(0) #To musi byc po kazdym imshow(), czeka na input z klawiatury. Parametr to czas czekania, 0 oznacza nieskonczonosc
-
+    csv_file.close()
     cv.destroyAllWindows()  #Po zakonczeniu programu (klawisz 'q') zamyka okienka zeby nie bylo segfaultow
