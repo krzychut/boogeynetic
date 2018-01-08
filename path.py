@@ -6,7 +6,7 @@ import math as math
 from point import *
 from settings import*
 import glob
-                    
+
 class Path:
     def __init__(self, n = 0, A = 1, B = 1, _start_point = Point(), _end_point = Point(-1, -1), calcCost = True):
         self.length = n #Ilosc wierzcholkow lamanej (nie liczymy punkto poczatkowego i startowego)
@@ -52,15 +52,13 @@ class Path:
                 cv.line(mask, self.getPoint(i-1), self.getPoint(i), 1, glob.rover_radius)
             cv.line(mask, self.end_point.getPoint(), self.getPoint(self.length-1), 1, glob.rover_radius)
         else:
-            cv.line(mask, self.start_point, self.end_point, 1, glob.rover_radius)
             cv.line(mask, self.start_point.getPoint(), self.end_point.getPoint(), 1, glob.rover_radius)
-        self.cost *= np.sum(cv.multiply(glob.variance_map, mask))
-        if display:
-            print 'Cost:', np.sum(masked), np.sum(mask), np.sum(glob.variance_map)
-            if np.sum(mask) < 20:
-                self.printPath()
-            cv.imshow("Masked", masked)
-            cv.waitKey(16)
+        masked_var = cv.multiply(glob.variance_map, mask)
+        #Terrain
+        masked_var_ter = cv.multiply(glob.terrain_map, masked_var)
+        #Total cost
+        total_cost = np.sum(masked_var_ter)
+        self.cost *= 1 + total_cost
 
     def isEqual(self, path = None): #Zwraca True, jesli sciezki sa identyczne (tzn. identyczne wspolrzedne kolejnych wierzcholkow), w przeciwnym razie False
         if None == path:

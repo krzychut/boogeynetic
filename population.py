@@ -6,13 +6,14 @@ import math as math
 from path import *
 from point import *
 from settings import*
-                  
+
 class population:
     def __init__(self, _pop_count = 0, _n = 0, _height = 0, _width = 0, _start_point = Point(), _end_point = Point(-1, -1)):
         self.paths = [] #Zbior wszystkich sciezek w danej populacji
         self.path_length = _n   #Zadana liczba wierzcholkow lamanej
         for i in range(0, _pop_count):
             self.insert(Path(_n, _height, _width))
+        # self.makeStairs()
         if DEBUG:
             pass
             # self.showPopStats()
@@ -40,3 +41,9 @@ class population:
         for path in self.paths:
             print 'Path', i, 'cost:', path.cost
             i += 1
+
+    def makeStairs(self):
+        for i in range(len(self.paths)/4):
+            pass
+            for j in range(self.path_length):
+                pass
