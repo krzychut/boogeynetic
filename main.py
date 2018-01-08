@@ -70,14 +70,14 @@ if __name__ == '__main__':
                 print 'Showing crossed population'
             window.drawPop(evo.pop_new)
         elif window.key == v_key:
-            # gen_time_elapsed = time.time()
+            gen_time_elapsed = time.time()
             # evo.nextGeneration()    #Stara populacja jest nadpisana przez nowa, pozostale populacje sa czyszczone
             # evo.selection()
             # evo.crossing()   # korzysta z crossingF_dict utworzonego w list2dict
             # evo.clearRepeatingSpecimens()
             # evo.adjustPopulation(pop_count)
             # evo.updateBestSpecimens(evo.pop_new)    #Odswieza liste trzech najlepszych rozwiazan
-            evo.evoSpin()
+            evo.evoSpin(mutation = False)
             gen_time_elapsed = time.time() - gen_time_elapsed
             print "Best Path:", evo.pop_new.paths[0].printPath()    #printPath() Wypisuje kolejne punkty sciezki, tylko do debuggingu
             print "Worst Path:", evo.pop_new.paths[-1].printPath()

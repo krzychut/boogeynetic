@@ -55,7 +55,19 @@ class evolution:
         tmp_path.calcCost()
         return tmp_path
 
-    #___CALC COST___#
+    def pathRandomPick(self, path_1 = None, path_2 = None):
+        tmp_path = Path(self.path_length, calcCost = False)
+        tmp_path.start_point = copy.deepcopy(path_1.start_point)
+        tmp_path.end_point = copy.deepcopy(path_1.end_point)
+        for i in range(self.path_length):
+            k = randint(1, 2)
+            if 1 == k:
+                tmp_path.points[i] = copy.deepcopy(path_1.points[i])
+            else:
+                tmp_path.points[i] = copy.deepcopy(path_2.points[i])
+        tmp_path.calcCost()
+        return tmp_path
+
     def pathHalfChanger(self, path_1 = None, path_2 = None):   #zamienia polowkami
         k = randint(0,1)
         tmp_path = Path(self.path_length)
@@ -63,15 +75,20 @@ class evolution:
         tmp_path.end_point = copy.deepcopy(path_1.end_point)
 
         for i in range(int(k*0.5*path_1.length),int((k+1)*0.5*path_1.length)):
-            tmp_path.points[i] = copy.deepcopy(path_2.points[i])
+            tmp_path.points[i] = copy.deepcopy(path_1.points[i])
 
         for i in range(int((1-k)*0.5*path_1.length),int((2-k)*0.5*path_1.length)):
             tmp_path.points[i] = copy.deepcopy(path_2.points[i])
-
+        print '====HALF=SWAP===='
+        path_1.printPath()
+        path_2.printPath()
+        print '=RESULT='
+        tmp_path.printPath()
         tmp_path.calcCost()
         return tmp_path
 
 
+    #___CALC COST___#
     def pathExchange(self, path_1 = None, path_2 = None):
         tmp_path = Path(self.path_length)
         tmp_path.start_point = copy.deepcopy(path_1.start_point)
@@ -190,7 +207,7 @@ class evolution:
 
 
 #___PATH_MUTATION___#
-    def mutateNormal(self, path):
+    def mutateNormalAll(self, path):    #Przesuwa cala sciezkie poza start i end o losowy wektor
         radius = np.random.normal(0, self.mutation_rate)
         head = np.random.random()*2.0*np.pi
         tmp_path = copy.deepcopy(path)
@@ -199,10 +216,28 @@ class evolution:
             point.y = int(min(self.height, max(0, point.y + radius*np.sin(head))))  #uwzglegniajac granice mapy i obciecie do integer
         return tmp_path
 
+    def mutateNormalEach(self, path):   #Przesuwa kazdy punkt o inny losowy wektor
+        tmp_path = copy.deepcopy(path)
+        for point in tmp_path.points:
+            radius = np.random.normal(0, self.mutation_rate)
+            head = np.random.random()*2.0*np.pi
+            point.x = int(min(self.width, max(0, point.x + radius*np.cos(head))))   #zmiana wspolrzednej o radius w kierunku head
+            point.y = int(min(self.height, max(0, point.y + radius*np.sin(head))))  #uwzglegniajac granice mapy i obciecie do integer
+        return tmp_path
+
+    def mutateNormalOne(self, path):    #Przesuwa losowy punkt o losowy wektor
+        tmp_path = copy.deepcopy(path)
+        i = randint(0, len(path.points)-1)
+        radius = np.random.normal(0, self.mutation_rate)
+        head = np.random.random()*2.0*np.pi
+        tmp_path.points[i].x = int(min(self.width, max(0, tmp_path.points[i].x + radius*np.cos(head))))   #zmiana wspolrzednej o radius w kierunku head
+        tmp_path.points[i].y = int(min(self.height, max(0, tmp_path.points[i].y + radius*np.sin(head))))  #uwzglegniajac granice mapy i obciecie do integer
+        return tmp_path
+
     def mutation(self): #TODO: TUTEJ DO KODOWANIA
         pop_count = len(self.pop_new.paths)
         for i in range(pop_count):
-            tmp_path = self.mutateNormal(self.pop_new.paths[i])
+            tmp_path = self.mutateNormalOne(self.pop_new.paths[i])
             self.pop_new.insert(tmp_path)
 
 
@@ -317,3 +352,5 @@ class evolution:
                 self.crossingF_dict[i] = self.pathExchange
             if crossingF_list[i] == 'pathRandomSplit':
                 self.crossingF_dict[i] = self.pathRandomSplit
+            if crossingF_list[i] == 'pathRandomPick':
+                self.crossingF_dict[i] = self.pathRandomPick

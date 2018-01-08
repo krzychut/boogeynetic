@@ -13,6 +13,7 @@ class population:
         self.path_length = _n   #Zadana liczba wierzcholkow lamanej
         for i in range(0, _pop_count):
             self.insert(Path(_n, _height, _width))
+        # self.makeStairs()
         if DEBUG:
             pass
             # self.showPopStats()
@@ -40,3 +41,9 @@ class population:
         for path in self.paths:
             print 'Path', i, 'cost:', path.cost
             i += 1
+
+    def makeStairs(self):
+        for i in range(len(self.paths)/4):
+            pass
+            for j in range(self.path_length):
+                pass
