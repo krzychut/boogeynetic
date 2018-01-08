@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
 #___DATA INITIALIZATION___#
     window = mainWindow(param.map)   #Zawiera mape (3 kanaly, na razie wykorzystany 1, zajme sie jeszcze terenem i mapa kosztow - Chuti)
-    glob.variance_map = window.heightmap[:,:,1]
+    # glob.variance_map = window.heightmap[:,:,1]
 
     n = param.n   #Liczba wierzcholkow lamanej
     pop_count = param.pop_count    #Liczba populacji

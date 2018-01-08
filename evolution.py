@@ -79,11 +79,6 @@ class evolution:
 
         for i in range(int((1-k)*0.5*path_1.length),int((2-k)*0.5*path_1.length)):
             tmp_path.points[i] = copy.deepcopy(path_2.points[i])
-        print '====HALF=SWAP===='
-        path_1.printPath()
-        path_2.printPath()
-        print '=RESULT='
-        tmp_path.printPath()
         tmp_path.calcCost()
         return tmp_path
 

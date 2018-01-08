@@ -7,7 +7,7 @@ from path import *
 from point import *
 from settings import *
 import time
-
+import glob
 
 class mainWindow:
 
@@ -25,6 +25,8 @@ class mainWindow:
         else:
             self.calcVariance(_rover_radius)
             cv.imwrite('var_'+_map, self.heightmap[:,:,1])
+        glob.variance_map = self.heightmap[:,:,1]
+        glob.terrain_map = self.heightmap[:,:,2]
         self.window_name = 'Evolution'
         self.mWindow = cv.namedWindow(self.window_name)
         self.maphandle = cv.imshow(self.window_name, self.tmp_map)
