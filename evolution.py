@@ -23,6 +23,7 @@ class evolution:
         self.best_specimens = [self.pop.paths[-1], self.pop.paths[-1], self.pop.paths[-1]]
         self.generation_counter = 0
         self.best_cost_history = [-1, -1, -1]
+        self.mutation_rate = 5
 
 #___PATH CROSSING___#
     def pathMean(self, path_1 = None, path_2 = None):   #Kazdy i-ty punkt nowej sciezki jest w polowie drogi pomiedzy i-tymi punktami sciezki 1 i 2
@@ -37,15 +38,20 @@ class evolution:
     def pathRandomSplit(self, path_1 = None, path_2 = None):
         k = randint(0,1)
         split = randint(0, self.path_length-1)
-        tmp_path = path(self.path_length)
+        tmp_path = Path(self.path_length, calcCost = False)
         tmp_path.start_point = copy.deepcopy(path_1.start_point)
         tmp_path.end_point = copy.deepcopy(path_1.end_point)
-
-        for i in range(k*split, (k+1)*split):
-            tmp_path.points[i] = copy.deepcopy(path_1.points[i])
-        for i in range((1-k)*split, (2-k)*split):
-            tmp_path.points[i] = path_2.points[i]
-
+        if 0 == k:
+            for i in range(0, split):
+                tmp_path.points[i] = copy.deepcopy(path_1.points[i])
+            for i in range(split, self.path_length):
+                tmp_path.points[i] = copy.deepcopy(path_2.points[i])
+        else:
+            for i in range(0, split):
+                tmp_path.points[i] = copy.deepcopy(path_2.points[i])
+            for i in range(split, self.path_length):
+                tmp_path.points[i] = copy.deepcopy(path_1.points[i])
+        tmp_path.calcCost()
         return tmp_path
 
 
@@ -168,28 +174,6 @@ class evolution:
         tmp_path.calcCost()
         return tmp_path
 
-
-
-
-
-
-
-#TODO: implement more crossing functions
-    def list2dict(self, crossingF_list): #konwersja listy w dictionary
-        self.crossingF_dict={}
-        for i in range(len(crossingF_list)):
-            if crossingF_list[i] == 'pathMean':
-                self.crossingF_dict[i] = self.pathMean
-            if crossingF_list[i] == 'pathHalfChanger':
-                self.crossingF_dict[i] = self.pathHalfChanger
-            if crossingF_list[i] == 'pathTwoBetter':
-                self.crossingF_dict[i] = self.pathTwoBetter
-            if crossingF_list[i] == 'pathThreeBetter':
-                self.crossingF_dict[i] = self.pathThreeBetter
-            if crossingF_list[i] == 'pathExchange':
-                self.crossingF_dict[i] = self.pathExchange
-
-
     def crossing(self):  #tu krzyzuje randomowym operatorem z podanych w data.txt patrz list2dict
         self.pop_new = population()
         rndindx=randint(0, len(self.crossingF_dict)-1) #wybiera randomowo jeden ze wskazanych operatorów
@@ -202,6 +186,12 @@ class evolution:
                 self.pop_new.insert(tmp_path)
         if DEBUG:
             print 'Population after crossing:', len(self.pop_new.paths)
+
+
+#___PATH_MUTATION___#
+    def mutateNormal(self, path):
+        radius = np.random.normal(0, self.mutation_rate)
+        
 
 #___PATH SELECTION___#
     def selection(self):    #Najpierw wybiera top_percent procent najlepszych sciezek, a potem uzupelnia wedlug rozkladu wykladniczego (najwiecej najlepszych)
@@ -287,3 +277,19 @@ class evolution:
         self.cropPopulation(pop_count)
         if DEBUG:
             print "Adjusted pop_new size to:", len(self.pop_new.paths)
+
+    def list2dict(self, crossingF_list): #konwersja listy w dictionary
+        self.crossingF_dict={}
+        for i in range(len(crossingF_list)):
+            if crossingF_list[i] == 'pathMean':
+                self.crossingF_dict[i] = self.pathMean
+            if crossingF_list[i] == 'pathHalfChanger':
+                self.crossingF_dict[i] = self.pathHalfChanger
+            if crossingF_list[i] == 'pathTwoBetter':
+                self.crossingF_dict[i] = self.pathTwoBetter
+            if crossingF_list[i] == 'pathThreeBetter':
+                self.crossingF_dict[i] = self.pathThreeBetter
+            if crossingF_list[i] == 'pathExchange':
+                self.crossingF_dict[i] = self.pathExchange
+            if crossingF_list[i] == 'pathRandomSplit':
+                self.crossingF_dict[i] = self.pathRandomSplit

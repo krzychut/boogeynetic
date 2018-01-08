@@ -78,9 +78,9 @@ if __name__ == '__main__':
             print "Best Path:", evo.pop_new.paths[0].printPath()    #printPath() Wypisuje kolejne punkty sciezki, tylko do debuggingu
             print "Worst Path:", evo.pop_new.paths[-1].printPath()
         print "Best Specimen Costs: ", evo.best_specimens[0].cost, evo.best_specimens[1].cost, evo.best_specimens[2].cost
-        # for spec in evo.best_specimens:
-        #     print "Best specimen:"
-        #     spec.printPath()
+        for spec in evo.best_specimens:
+            print "Best specimen:"
+            spec.printPath()
         for path in evo.best_specimens:
             window.drawPath(path, [0, 255, 0])
         print 'Generation:', evo.generation_counter, ' | Elapsed time:', gen_time_elapsed, 'seconds'

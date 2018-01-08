@@ -6,7 +6,7 @@ import math as math
 from path import *
 from point import *
 from settings import*
-                  
+
 class population:
     def __init__(self, _pop_count = 0, _n = 0, _height = 0, _width = 0, _start_point = Point(), _end_point = Point(-1, -1)):
         self.paths = [] #Zbior wszystkich sciezek w danej populacji
