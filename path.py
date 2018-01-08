@@ -6,7 +6,7 @@ import math as math
 from point import *
 from settings import*
 import glob
-                    
+
 class Path:
     def __init__(self, n = 0, A = 1, B = 1, _start_point = Point(), _end_point = Point(-1, -1), calcCost = True):
         self.length = n #Ilosc wierzcholkow lamanej (nie liczymy punkto poczatkowego i startowego)
@@ -52,9 +52,9 @@ class Path:
                 cv.line(mask, self.getPoint(i-1), self.getPoint(i), 1, glob.rover_radius)
             cv.line(mask, self.end_point.getPoint(), self.getPoint(self.length-1), 1, glob.rover_radius)
         else:
-            cv.line(mask, self.start_point, self.end_point, 1, glob.rover_radius)
             cv.line(mask, self.start_point.getPoint(), self.end_point.getPoint(), 1, glob.rover_radius)
-        self.cost *= np.sum(cv.multiply(glob.variance_map, mask))
+        variance_cost = np.sum(cv.multiply(glob.variance_map, mask))
+        self.cost *= 1 + variance_cost
         if display:
             print 'Cost:', np.sum(masked), np.sum(mask), np.sum(glob.variance_map)
             if np.sum(mask) < 20:

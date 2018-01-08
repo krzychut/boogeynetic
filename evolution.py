@@ -27,24 +27,39 @@ class evolution:
 #___PATH CROSSING___#
     def pathMean(self, path_1 = None, path_2 = None):   #Kazdy i-ty punkt nowej sciezki jest w polowie drogi pomiedzy i-tymi punktami sciezki 1 i 2
         tmp_path = Path(self.path_length, calcCost = False)
-        tmp_path.start_point = path_1.start_point
-        tmp_path.end_point = path_1.end_point
+        tmp_path.start_point = copy.deepcopy(path_1.start_point)
+        tmp_path.end_point = copy.deepcopy(path_1.end_point)
         for i in range(path_1.length):
             tmp_path.points[i] = path_1.points[i].pointMean(path_2.points[i])
         tmp_path.calcCost()
         return tmp_path
 
+    def pathRandomSplit(self, path_1 = None, path_2 = None):
+        k = randint(0,1)
+        split = randint(0, self.path_length-1)
+        tmp_path = path(self.path_length)
+        tmp_path.start_point = copy.deepcopy(path_1.start_point)
+        tmp_path.end_point = copy.deepcopy(path_1.end_point)
+
+        for i in range(k*split, (k+1)*split):
+            tmp_path.points[i] = copy.deepcopy(path_1.points[i])
+        for i in range((1-k)*split, (2-k)*split):
+            tmp_path.points[i] = path_2.points[i]
+
+        return tmp_path
+
+
     def pathHalfChanger(self, path_1 = None, path_2 = None):   #zamienia polowkami
         k = randint(0,1)
         tmp_path = Path(self.path_length)
-        tmp_path.start_point = path_1.start_point
-        tmp_path.end_point = path_1.end_point
+        tmp_path.start_point = copy.deepcopy(path_1.start_point)
+        tmp_path.end_point = copy.deepcopy(path_1.end_point)
 
         for i in range(int(k*0.5*path_1.length),int((k+1)*0.5*path_1.length)):
-            tmp_path.points[i] = path_1.points[i].pointMean(path_2.points[i])
+            tmp_path.points[i] = copy.deepcopy(path_2.points[i])
 
         for i in range(int((1-k)*0.5*path_1.length),int((2-k)*0.5*path_1.length)):
-            tmp_path.points[i] = path_1.points[i].pointMean(path_2.points[i])
+            tmp_path.points[i] = copy.deepcopy(path_2.points[i])
 
         tmp_path.calcCost()
         return tmp_path
@@ -52,32 +67,33 @@ class evolution:
 
     def pathExchange(self, path_1 = None, path_2 = None):
         tmp_path = Path(self.path_length)
-        tmp_path.start_point = path_1.start_point
-        tmp_path.end_point = path_1.end_point
+        tmp_path.start_point = copy.deepcopy(path_1.start_point)
+        tmp_path.end_point = copy.deepcopy(path_1.end_point)
 
         mincost=1000000000
         tmp_bestPath=Path(self.path_length)
-        tmp_bestPath.start_point = path_1.start_point
-        tmp_bestPath.end_point = path_1.end_point
+        tmp_bestPath.start_point = copy.deepcopy(path_1.start_point)
+        tmp_bestPath.end_point = copy.deepcopy(path_1.end_point)
 
         for i in range(1,self.path_length-1):
             for j in range(self.path_length):
                 if j < i:
-                    tmp_path.points[j]=path_1.points[j]
+                    tmp_path.points[j]=copy.deepcopy(path_1.points[j])
                 else:
-                    tmp_path.points[j]=path_2.points[j]
+                    tmp_path.points[j]=copy.deepcopy(path_2.points[j])
+
             tmp_path.calcCost()
             if tmp_path.cost < mincost:
                 mincost=tmp_path.cost
-                tmp_bestPath=tmp_path
+                tmp_bestPath=copy.deepcopy(tmp_path)
         tmp_path=tmp_bestPath
         tmp_path.calcCost()
         return tmp_path
 
     def pathTwoBetter(self, path_1 = None, path_2 = None):   #Analizuje �ciezk� wybieraj�c lepsze punkty
         tmp_path = Path(self.path_length)
-        tmp_path.start_point = path_1.start_point
-        tmp_path.end_point = path_1.end_point
+        tmp_path.start_point = copy.deepcopy(path_1.start_point)
+        tmp_path.end_point = copy.deepcopy(path_1.end_point)
         temp_twos_1=Path(0)
         temp_twos_2=Path(0)
         temp_cost=1000000000
@@ -97,48 +113,47 @@ class evolution:
 
         tmp_path.calcCost()
         return tmp_path
+
     def pathThreeBetter(self, path_1 = None, path_2 = None):   #Analizuje �ciezk� wybieraj�c lepsze pary punkt�w
         tmp_path = Path(self.path_length)
-        tmp_path.start_point = path_1.start_point
-        tmp_path.end_point = path_1.end_point
+        tmp_path.start_point = copy.deepcopy(path_1.start_point)
+        tmp_path.end_point = copy.deepcopy(path_1.end_point)
         temp_three_1=Path(1, calcCost = False)
         temp_three_2=Path(1, calcCost = False)
         temp_cost=1000000000
         i = 0
 
-        temp_three_1.start_point=path_1.start_point
+        temp_three_1.start_point=copy.deepcopy(path_1.start_point)
         temp_three_2.start_point=path_2.start_point
 
-        temp_three_1.points[0]=path_1.points[0] 
+        temp_three_1.points[0]=path_1.points[0]
         temp_three_2.points[0]=path_2.points[0]
 
         temp_three_1.end_point=path_1.points[1]
         temp_three_2.end_point=path_2.points[1]
 
-        temp_three_1.calcCost()      
-        temp_three_2.calcCost()      
+        temp_three_1.calcCost()
+        temp_three_2.calcCost()
 
         if temp_three_1.cost < temp_three_2.cost:
             tmp_path.points[0] = path_1.points[0]
             tmp_path.points[1] = path_1.points[1]
-
         else:
             tmp_path.points[0] = path_2.points[0]
             tmp_path.points[1] = path_2.points[1]
 
-        
         while i < path_1.length-2:
             temp_three_1.start_point=path_1.points[i]
             temp_three_2.start_point=path_2.points[i]
 
-            temp_three_1.points[0]=path_1.points[i+1] 
-            temp_three_2.points[0]=path_2.points[i+1] 
+            temp_three_1.points[0]=path_1.points[i+1]
+            temp_three_2.points[0]=path_2.points[i+1]
 
             temp_three_1.end_point=path_1.points[i+2]
             temp_three_2.end_point=path_2.points[i+2]
 
-            temp_three_1.calcCost()      
-            temp_three_2.calcCost()      
+            temp_three_1.calcCost()
+            temp_three_2.calcCost()
 
             if temp_three_1.cost < temp_three_2.cost:
                 tmp_path.points[i+1] = path_1.points[i+1]
