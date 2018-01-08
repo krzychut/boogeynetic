@@ -55,12 +55,6 @@ class Path:
             cv.line(mask, self.start_point.getPoint(), self.end_point.getPoint(), 1, glob.rover_radius)
         variance_cost = np.sum(cv.multiply(glob.variance_map, mask))
         self.cost *= 1 + variance_cost
-        if display:
-            print 'Cost:', np.sum(masked), np.sum(mask), np.sum(glob.variance_map)
-            if np.sum(mask) < 20:
-                self.printPath()
-            cv.imshow("Masked", masked)
-            cv.waitKey(16)
 
     def isEqual(self, path = None): #Zwraca True, jesli sciezki sa identyczne (tzn. identyczne wspolrzedne kolejnych wierzcholkow), w przeciwnym razie False
         if None == path:

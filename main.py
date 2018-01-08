@@ -14,6 +14,7 @@ import glob
 import time
 
 if __name__ == '__main__':
+#___READING PARAMETERS___#
     param = Parameters('data.txt')  #zawiera podstawowe parametry (opisana w settings)
     if 1 < len(sys.argv):
         try:
@@ -27,9 +28,10 @@ if __name__ == '__main__':
         print "No argument passed. Using default parameter set: 1"
         param.SetPack(1)
 
+#___DATA INITIALIZATION___#
     window = mainWindow(param.map)   #Zawiera mape (3 kanaly, na razie wykorzystany 1, zajme sie jeszcze terenem i mapa kosztow - Chuti)
     glob.variance_map = window.heightmap[:,:,1]
-    print glob.variance_map.dtype
+
     n = param.n   #Liczba wierzcholkow lamanej
     pop_count = param.pop_count    #Liczba populacji
     # exp_beta=param.beta#beta rozk�adu wykladniczego
@@ -40,15 +42,17 @@ if __name__ == '__main__':
     _n = param.n,
     _height = window.height,
     _width = window.width)  #To zawiera populacje stara, populacje po selekcji i populacje po krzyzowaniu + funkcje do tego
+    evo.list2dict(param.crossingF)  #tu zmienia liste operatorów krzyzowania na dictionary
+
     gen_time_elapsed = time.time()
     evo.selection() #Tu selekcja wedlug rozkladu wykladniczego
-    evo.list2dict(param.crossingF)  #tu zmienia liste operatorów krzyzowania na dictionary
     evo.crossing()  #Tu krzyzowanie. operatory dobiera na podstawie crossingF_dict z list2dict
     evo.clearRepeatingSpecimens()   #Usuwa powtorzenia z populacji po krzyzowaniu
     evo.adjustPopulation(pop_count) #Dodaje losowe sciezki albo usuwa najgorsze z nowej populacji, zeby bylo ich tyle co przed selekcja
     evo.updateBestSpecimens(evo.pop_new)
     gen_time_elapsed = time.time() - gen_time_elapsed
 
+#___MAIN LOOP___#
     while(True):
         window.tmp_map = window.heightmap.copy()
         if(window.key == q_key):
@@ -66,14 +70,14 @@ if __name__ == '__main__':
                 print 'Showing crossed population'
             window.drawPop(evo.pop_new)
         elif window.key == v_key:
-            gen_time_elapsed = time.time()
-            evo.nextGeneration()    #Stara populacja jest nadpisana przez nowa, pozostale populacje sa czyszczone
-            evo.selection()
-            evo.crossing()   # korzysta z crossingF_dict utworzonego w list2dict
-            evo.clearRepeatingSpecimens()
-            evo.adjustPopulation(pop_count)
-            # evo.pop_new.showPopStats()
-            evo.updateBestSpecimens(evo.pop_new)    #Odswieza liste trzech najlepszych rozwiazan
+            # gen_time_elapsed = time.time()
+            # evo.nextGeneration()    #Stara populacja jest nadpisana przez nowa, pozostale populacje sa czyszczone
+            # evo.selection()
+            # evo.crossing()   # korzysta z crossingF_dict utworzonego w list2dict
+            # evo.clearRepeatingSpecimens()
+            # evo.adjustPopulation(pop_count)
+            # evo.updateBestSpecimens(evo.pop_new)    #Odswieza liste trzech najlepszych rozwiazan
+            evo.evoSpin()
             gen_time_elapsed = time.time() - gen_time_elapsed
             print "Best Path:", evo.pop_new.paths[0].printPath()    #printPath() Wypisuje kolejne punkty sciezki, tylko do debuggingu
             print "Worst Path:", evo.pop_new.paths[-1].printPath()

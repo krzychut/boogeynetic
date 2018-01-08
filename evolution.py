@@ -26,6 +26,7 @@ class evolution:
         self.mutation_rate = 5
 
 #___PATH CROSSING___#
+    #___NO CALC COST___#
     def pathMean(self, path_1 = None, path_2 = None):   #Kazdy i-ty punkt nowej sciezki jest w polowie drogi pomiedzy i-tymi punktami sciezki 1 i 2
         tmp_path = Path(self.path_length, calcCost = False)
         tmp_path.start_point = copy.deepcopy(path_1.start_point)
@@ -54,7 +55,7 @@ class evolution:
         tmp_path.calcCost()
         return tmp_path
 
-
+    #___CALC COST___#
     def pathHalfChanger(self, path_1 = None, path_2 = None):   #zamienia polowkami
         k = randint(0,1)
         tmp_path = Path(self.path_length)
@@ -191,7 +192,20 @@ class evolution:
 #___PATH_MUTATION___#
     def mutateNormal(self, path):
         radius = np.random.normal(0, self.mutation_rate)
-        
+        head = np.random.random()*2.0*np.pi
+        tmp_path = copy.deepcopy(path)
+        for point in tmp_path.points:
+            point.x = int(min(self.width, max(0, point.x + radius*np.cos(head))))   #zmiana wspolrzednej o radius w kierunku head
+            point.y = int(min(self.height, max(0, point.y + radius*np.sin(head))))  #uwzglegniajac granice mapy i obciecie do integer
+        return tmp_path
+
+    def mutation(self): #TODO: TUTEJ DO KODOWANIA
+        pop_count = len(self.pop_new.paths)
+        for i in range(pop_count):
+            tmp_path = self.mutateNormal(self.pop_new.paths[i])
+            self.pop_new.insert(tmp_path)
+
+
 
 #___PATH SELECTION___#
     def selection(self):    #Najpierw wybiera top_percent procent najlepszych sciezek, a potem uzupelnia wedlug rozkladu wykladniczego (najwiecej najlepszych)
@@ -212,6 +226,16 @@ class evolution:
             print 'Old population: ', self.pop_count,'New Population:', len(self.pop_selected.paths)
 
 #___UTILITY FUNCTIONS___#
+    def evoSpin(self, mutation = True):
+        self.nextGeneration()    #Stara populacja jest nadpisana przez nowa, pozostale populacje sa czyszczone
+        self.selection()
+        self.crossing()   # korzysta z crossingF_dict utworzonego w list2dict
+        if True == mutation:
+            self.mutation()
+        self.clearRepeatingSpecimens()
+        self.adjustPopulation(self.pop_count)
+        self.updateBestSpecimens(self.pop_new)
+
     def clearPopulation(self, pop_to_clear = None): #Czysci cala wybrana populacje, w zasadzie niepotrzebne, mozna napisac np.: evo.pop_new = []
         if None == pop_to_clear:
             pass

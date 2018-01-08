@@ -8,7 +8,7 @@ from point import *
 from settings import *
 import time
 
-                         
+
 class mainWindow:
 
     def __init__(self,_map='terrain.png', _rover_radius = 5):
@@ -17,7 +17,14 @@ class mainWindow:
         self.tmp_map = self.heightmap.copy()
         self.heightmap[:,:,1] = 0
         self.heightmap[:,:,2] = 1
-        self.calcVariance(_rover_radius)
+        var_map = cv.imread('var_'+_map, cv.IMREAD_GRAYSCALE)
+        if isinstance(var_map, np.ndarray):
+            print var_map.shape, self.heightmap[:,:,1].shape
+            if var_map.shape == self.heightmap[:,:,1].shape:
+                self.heightmap[:,:,1] = var_map[:,:]
+        else:
+            self.calcVariance(_rover_radius)
+            cv.imwrite('var_'+_map, self.heightmap[:,:,1])
         self.window_name = 'Evolution'
         self.mWindow = cv.namedWindow(self.window_name)
         self.maphandle = cv.imshow(self.window_name, self.tmp_map)
