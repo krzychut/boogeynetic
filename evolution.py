@@ -230,10 +230,15 @@ class evolution:
         return tmp_path
 
     def mutation(self): #TODO: TUTEJ DO KODOWANIA
-        pop_count = len(self.pop_new.paths)
-        for i in range(pop_count):
-            tmp_path = self.mutateNormalOne(self.pop_new.paths[i])
-            self.pop_new.insert(tmp_path)
+        if len(self.mutate_dict) != 0:
+            pop_count = len(self.pop_new.paths)
+            rndindx=randint(0, len(self.mutate_dict)-1) #wybiera randomowo jeden ze wskazanych operatorów
+            print self.mutate_dict[rndindx]
+            for i in range(pop_count):
+                tmp_path = self.mutate_dict[rndindx](self.pop_new.paths[i])
+                self.pop_new.insert(tmp_path)
+        else:
+            return   #nie wiem czy to jest potrzebne ten else ale nie istotne można usunąć jak sie nie podoba ja sie boje
 
 
 
@@ -332,20 +337,36 @@ class evolution:
         if DEBUG:
             print "Adjusted pop_new size to:", len(self.pop_new.paths)
 
-    def list2dict(self, crossingF_list): #konwersja listy w dictionary
+    def list2dict(self, parameters_list): #konwersja listy w dictionary
         self.crossingF_dict={}
-        for i in range(len(crossingF_list)):
-            if crossingF_list[i] == 'pathMean':
-                self.crossingF_dict[i] = self.pathMean
-            if crossingF_list[i] == 'pathHalfChanger':
-                self.crossingF_dict[i] = self.pathHalfChanger
-            if crossingF_list[i] == 'pathTwoBetter':
-                self.crossingF_dict[i] = self.pathTwoBetter
-            if crossingF_list[i] == 'pathThreeBetter':
-                self.crossingF_dict[i] = self.pathThreeBetter
-            if crossingF_list[i] == 'pathExchange':
-                self.crossingF_dict[i] = self.pathExchange
-            if crossingF_list[i] == 'pathRandomSplit':
-                self.crossingF_dict[i] = self.pathRandomSplit
-            if crossingF_list[i] == 'pathRandomPick':
-                self.crossingF_dict[i] = self.pathRandomPick
+        self.mutate_dict={}
+        i=0 #iterator dla crossingF_dict
+        k=0 #iterator dla mutate_dict
+        for j in range(len(parameters_list)):
+            if parameters_list[j][0] == 'p':
+                if parameters_list[i] == 'pathMean':
+                    self.crossingF_dict[i] = self.pathMean
+                if parameters_list[i] == 'pathHalfChanger':
+                    self.crossingF_dict[i] = self.pathHalfChanger
+                if parameters_list[i] == 'pathTwoBetter':
+                    self.crossingF_dict[i] = self.pathTwoBetter
+                if parameters_list[i] == 'pathThreeBetter':
+                    self.crossingF_dict[i] = self.pathThreeBetter
+                if parameters_list[i] == 'pathExchange':
+                    self.crossingF_dict[i] = self.pathExchange
+                if parameters_list[i] == 'pathRandomSplit':
+                    self.crossingF_dict[i] = self.pathRandomSplit
+                if parameters_list[i] == 'pathRandomPick':
+                    self.crossingF_dict[i] = self.pathRandomPick
+                i=i+1
+
+            if parameters_list[j][0] == 'm':
+                if parameters_list[j] == 'mutateNormalAll':
+                    self.mutate_dict[k] = self.mutateNormalAll
+                if parameters_list[j] == 'mutateNormalOne':
+                    self.mutate_dict[k] = self.mutateNormalOne
+                if parameters_list[j] == 'mutateNormalEach':
+                    self.mutate_dict[k] = self.mutateNormalEach
+                k=k+1
+        print self.crossingF_dict
+        print self.mutate_dict

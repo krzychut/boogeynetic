@@ -43,7 +43,7 @@ if __name__ == '__main__':
     _n = param.n,
     _height = window.height,
     _width = window.width)  #To zawiera populacje stara, populacje po selekcji i populacje po krzyzowaniu + funkcje do tego
-    evo.list2dict(param.crossingF)  #tu zmienia liste operatorów krzyzowania na dictionary
+    evo.list2dict(param.parameters_list)  #tu zmienia liste operatorów krzyzowania na dictionary
 
     gen_time_elapsed = time.time()
     evo.selection() #Tu selekcja wedlug rozkladu wykladniczego

@@ -28,7 +28,7 @@ class Parameters:
         self.file=data#lokalizacja danych
         self.beta=0#beta rozk�ady wyk�adniczego
         self.top_percent = 1
-        self.crossingF='pathMean' #wektor operatorów
+        self.parameters_list=["pathMean","mutateNormalAll"] #wektor operatorów
  #---------------------------------------------------------------------
     def getNodNum(self,num):   #pobiera liczbe wezlow
         self.n=num
@@ -52,10 +52,10 @@ class Parameters:
         self.beta=input('Podaj bete: ')
 #-------------------------------------------------------------------------
 
-    def getcrossingF(self,num):   #pobiera wektro operatorów krzyzowania
-        self.crossingF=num
-    def getcrossingFKeypad(self):    #tu nie wiem jak sie podaje te dict ~michalek
-        self.crossingF=input('Podaj Funkcje krzyzowania: ')
+    def getparameters(self,num):   #pobiera wektro operatorów
+        self.parameters_list=num
+    def getparametersKeypad(self):    #tu nie wiem jak sie podaje te dict ~michalek
+        self.parameters_list=input('Podaj Funkcje krzyzowania: ')
 
   #------------------------------------------------------------------------
     def NumOfPack(self):#zwraca ilosc zestaw�w danych
@@ -66,13 +66,13 @@ class Parameters:
         wiersz = linecache.getline(self.file, number+2)
         str_vec=wiersz.split(' ')
         self.n,self.pop_count,self.map,self.beta,self.top_percent=str_vec[0:5]#pierwsze 5 parametrów wczytane
-        self.crossingF=str_vec[5:]#pozostałe elementy czyli wektor operatorow krzyzowania plu 'END'
-        del self.crossingF[-1]#usuwanie 'END'
+        self.parameters_list=str_vec[5:]#pozostałe elementy czyli wektor operatorow plu 'END'
+        del self.parameters_list[-1]#usuwanie 'END'
         l=len(self.map)
         self.map=self.map[1:l-1]
         self.n=int(float(self.n))
         self.pop_count=int(float(self.pop_count))
         self.beta=int(float(self.beta))
-        print self.crossingF[0:]
+        print self.parameters_list[0:]
 
         return wiersz
