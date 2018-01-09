@@ -229,6 +229,19 @@ class evolution:
         tmp_path.points[i].y = int(min(self.height, max(0, tmp_path.points[i].y + radius*np.sin(head))))  #uwzglegniajac granice mapy i obciecie do integer
         return tmp_path
 
+    def mutateMissOne(self, path): #pominięcie jednego węzła i postawienie go w środku między jego sąsiadami mozę być źel matematycznie ogarnięte ale to wynika z mojego osobistego prywatnego nieogarnięcia
+        tmp_path = copy.deepcopy(path)
+        i = randint(1, len(path.points)-2)
+        x1=tmp_path.getPoint(i-1)[0]
+        y1=tmp_path.getPoint(i-1)[1]
+        x2=tmp_path.getPoint(i+1)[0]
+        y2=tmp_path.getPoint(i+1)[1]
+        tmp_x = int(x1+(x2-x1)/2)
+        tmp_y = int(y1+(y2-y1)/2)
+        tmp_path.points[i].x = tmp_x
+        tmp_path.points[i].y = tmp_y
+        return tmp_path
+
     def mutation(self): #TODO: TUTEJ DO KODOWANIA
         if len(self.mutate_dict) != 0:
             pop_count = len(self.pop_new.paths)
@@ -367,6 +380,8 @@ class evolution:
                     self.mutate_dict[k] = self.mutateNormalOne
                 if parameters_list[j] == 'mutateNormalEach':
                     self.mutate_dict[k] = self.mutateNormalEach
+                if parameters_list[j] == 'mutateMissOne':
+                    self.mutate_dict[k] = self.mutateMissOne
                 k=k+1
         print self.crossingF_dict
         print self.mutate_dict
