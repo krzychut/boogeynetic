@@ -36,6 +36,31 @@ class evolution:
         tmp_path.calcCost()
         return tmp_path
 
+    def pathFragmentExchange(self, path_1 = None, path_2 = None):
+        k = randint(0,1)
+        frag_start = randint(1, self.path_length-3)
+        frag_end = randint(frag_start, self.path_length-2)
+        tmp_path = Path(self.path_length, calcCost = False)
+        tmp_path.start_point = copy.deepcopy(path_1.start_point)
+        tmp_path.end_point = copy.deepcopy(path_1.end_point)
+        if 0 == k:
+            for i in range(0, frag_start):
+                tmp_path.points[i] = copy.deepcopy(path_1.points[i])
+            for i in range(frag_start, frag_end):
+                tmp_path.points[i] = copy.deepcopy(path_2.points[i])
+            for i in range(frag_end, self.path_length):
+                tmp_path.points[i] = copy.deepcopy(path_1.points[i])
+        else:
+            for i in range(0, frag_start):
+                tmp_path.points[i] = copy.deepcopy(path_2.points[i])
+            for i in range(frag_start, frag_end):
+                tmp_path.points[i] = copy.deepcopy(path_1.points[i])
+            for i in range(frag_end, self.path_length):
+                tmp_path.points[i] = copy.deepcopy(path_2.points[i])
+        tmp_path.calcCost()
+        return tmp_path
+
+
     def pathRandomSplit(self, path_1 = None, path_2 = None):
         k = randint(0,1)
         split = randint(0, self.path_length-1)
@@ -84,6 +109,7 @@ class evolution:
 
 
     #___CALC COST___#
+
     def pathExchange(self, path_1 = None, path_2 = None):
         tmp_path = Path(self.path_length)
         tmp_path.start_point = copy.deepcopy(path_1.start_point)
@@ -271,6 +297,7 @@ class evolution:
         if DEBUG:
             print idx, 'paths added as top percentile.'
         while len(self.pop_selected.paths) < int(0.5 * math.sqrt(8 * len(self.pop.paths) + 1) + 0.5):
+        # while len(self.pop_selected.paths) < 0.2 * len(self.pop.paths):
             idx = int(np.random.exponential(self.exp_beta) * 100)
             if idx < self.pop_count:
                 self.pop_selected.insert(self.pop.paths[idx])
@@ -375,6 +402,8 @@ class evolution:
                     self.crossingF_dict[i] = self.pathRandomSplit
                 if parameters_list[i] == 'pathRandomPick':
                     self.crossingF_dict[i] = self.pathRandomPick
+                if parameters_list[i] == 'pathFragmentExchange':
+                    self.crossingF_dict[i] = self.pathFragmentExchange
                 i=i+1
 
             if parameters_list[j][0] == 'm':

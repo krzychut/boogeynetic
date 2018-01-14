@@ -1,5 +1,5 @@
 n pop_count map beta top_percent crossingF
 ###################################
+5 200 'map_hard2.jpg' 4 10 pathRandomSplit pathFragmentExchange mutateNormalEach mutateMissOne END
 5 100 'terrain.png' 3 1 pathThreeBetter END
-5 500 'map1.jpg' 4 5 pathMean pathRandomPick pathRandomSplit mutateNormalEach END
 3 1000 'terrain.png' 3 1 pathMean pathTwoBetter mutateNormalOne END
