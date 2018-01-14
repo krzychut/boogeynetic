@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-import cv2 as cv
+﻿import cv2 as cv
 import numpy as np
 from random import randint
 import math as math
@@ -24,10 +22,10 @@ if __name__ == '__main__':
             param.SetPack(int(str(sys.argv[1])))
         except ValueError:
             print "Argument passed must be an integer. Using default parameter set: 1"
-            param.SetPack(1)
+            param.SetPack(5)
     else:
         print "No argument passed. Using default parameter set: 1"
-        param.SetPack(1)
+        param.SetPack(5)
 
 #___DATA INITIALIZATION___#
     window = mainWindow(param.map)   #Zawiera mape (3 kanaly, na razie wykorzystany 1, zajme sie jeszcze terenem i mapa kosztow - Chuti)
@@ -57,8 +55,8 @@ if __name__ == '__main__':
     wr=csv.writer(csv_file)     #PROSTY ZAPIS DO PLIKU CSV
     wr.writerow(["_exp_beta","_top_percent","pop_count","_n","_height","_width"])
     wr.writerow([param.beta,param.top_percent,param.pop_count,param.n,window.height,window.width])
-    wr.writerow(["POPULACJA","b_cost_0","b_cost_1",""])
-
+    wr.writerow(["POPULACJA","b_cost_0","b_cost_1","", "gen_time_elapsed"])
+    k=0
 #___MAIN LOOP___#
     while(True):
         window.tmp_map = window.heightmap.copy()
@@ -76,7 +74,7 @@ if __name__ == '__main__':
             if DEBUG:
                 print 'Showing crossed population'
             window.drawPop(evo.pop_new)
-        elif window.key == v_key:
+        if k<2:
             gen_time_elapsed = time.time()
             # evo.nextGeneration()    #Stara populacja jest nadpisana przez nowa, pozostale populacje sa czyszczone
             # evo.selection()
@@ -88,6 +86,9 @@ if __name__ == '__main__':
             gen_time_elapsed = time.time() - gen_time_elapsed
             print "Best Path:", evo.pop_new.paths[0].printPath()    #printPath() Wypisuje kolejne punkty sciezki, tylko do debuggingu
             print "Worst Path:", evo.pop_new.paths[-1].printPath()
+            k+=1
+        else:
+            break
         print "Best Specimen Costs: ", evo.best_specimens[0].cost, evo.best_specimens[1].cost, evo.best_specimens[2].cost
         for spec in evo.best_specimens:
             print "Best specimen:"
@@ -96,9 +97,10 @@ if __name__ == '__main__':
             window.drawPath(path, [0, 255, 0])
         print 'Generation:', evo.generation_counter, ' | Elapsed time:', gen_time_elapsed, 'seconds'
         print 'Best cost history:', evo.best_cost_history, '\n========================================================='
-        l=[evo.generation_counter,evo.best_cost_history[0],evo.best_cost_history[1],evo.best_cost_history[2]]# ELEMENTY DO ZAPISU DO PLIKU
+        l=[evo.generation_counter,evo.best_cost_history[0],evo.best_cost_history[1],evo.best_cost_history[2],gen_time_elapsed]# ELEMENTY DO ZAPISU DO PLIKU
         wr.writerow(l)
         cv.imshow(window.window_name, window.tmp_map) #Tutaj odswiezany jest wyswietlany obrazek, tzn. tmp_map z naniesionymi sciezkami pojawia sie na ekranie
-        window.key = cv.waitKey(0) #To musi byc po kazdym imshow(), czeka na input z klawiatury. Parametr to czas czekania, 0 oznacza nieskonczonosc
+        window.key = cv.waitKey(1) #To musi byc po kazdym imshow(), czeka na input z klawiatury. Parametr to czas czekania, 0 oznacza nieskonczonosc
+        cv.imwrite('OUT.jpg',window.tmp_map)
     csv_file.close()
     cv.destroyAllWindows()  #Po zakonczeniu programu (klawisz 'q') zamyka okienka zeby nie bylo segfaultow
