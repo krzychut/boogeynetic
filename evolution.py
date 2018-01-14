@@ -235,6 +235,7 @@ class evolution:
         for point in tmp_path.points:
             point.x = int(min(self.width, max(0, point.x + radius*np.cos(head))))   #zmiana wspolrzednej o radius w kierunku head
             point.y = int(min(self.height, max(0, point.y + radius*np.sin(head))))  #uwzglegniajac granice mapy i obciecie do integer
+        tmp_path.calcCost
         return tmp_path
 
     def mutateNormalEach(self, path):   #Przesuwa kazdy punkt o inny losowy wektor
@@ -244,6 +245,7 @@ class evolution:
             head = np.random.random()*2.0*np.pi
             point.x = int(min(self.width, max(0, point.x + radius*np.cos(head))))   #zmiana wspolrzednej o radius w kierunku head
             point.y = int(min(self.height, max(0, point.y + radius*np.sin(head))))  #uwzglegniajac granice mapy i obciecie do integer
+        tmp_path.calcCost
         return tmp_path
 
     def mutateNormalOne(self, path):    #Przesuwa losowy punkt o losowy wektor
@@ -253,6 +255,7 @@ class evolution:
         head = np.random.random()*2.0*np.pi
         tmp_path.points[i].x = int(min(self.width, max(0, tmp_path.points[i].x + radius*np.cos(head))))   #zmiana wspolrzednej o radius w kierunku head
         tmp_path.points[i].y = int(min(self.height, max(0, tmp_path.points[i].y + radius*np.sin(head))))  #uwzglegniajac granice mapy i obciecie do integer
+        tmp_path.calcCost
         return tmp_path
 
     def mutateMissOne(self, path): #pominięcie jednego węzła i postawienie go w środku między jego sąsiadami mozę być źel matematycznie ogarnięte ale to wynika z mojego osobistego prywatnego nieogarnięcia
@@ -266,6 +269,7 @@ class evolution:
         tmp_y = int((y2+y1)/2)
         tmp_path.points[i].x = tmp_x
         tmp_path.points[i].y = tmp_y
+        tmp_path.calcCost()
         return tmp_path
 
     def mutation(self): #TODO: TUTEJ DO KODOWANIA
@@ -274,9 +278,9 @@ class evolution:
             rndindx=randint(0, len(self.mutate_dict)-1) #wybiera randomowo jeden ze wskazanych operatorów
             print self.mutate_dict[rndindx]
             tmp_paths = []
-            while 0.9 * pop_count < len(self.pop_new.paths):
+            for i in range(len(self.pop_new.paths)/10):
                 tmp_paths.append(self.mutate_dict[rndindx](self.pop_new.paths[0]))
-                self.pop_new.delete(0)
+                # self.pop_new.delete(0)
                 # self.pop_new.insert(tmp_path)
             for path in tmp_paths:
                 self.pop_new.insert(path)
@@ -288,6 +292,8 @@ class evolution:
 #___PATH SELECTION___#
     def selection(self):    #Najpierw wybiera top_percent procent najlepszych sciezek, a potem uzupelnia wedlug rozkladu wykladniczego (najwiecej najlepszych)
         idx = 0
+        for spec in self.best_specimens:
+            self.pop_selected.insert(spec)
         while len(self.pop_selected.paths) < int(0.5 * math.sqrt(8 * len(self.pop.paths) + 1) + 0.5) \
         and len(self.pop_selected.paths) < len(self.pop.paths) * self.top_percent * 0.01:
             self.pop_selected.insert(self.pop.paths[idx])
@@ -309,9 +315,9 @@ class evolution:
         self.nextGeneration()    #Stara populacja jest nadpisana przez nowa, pozostale populacje sa czyszczone
         self.selection()
         self.crossing()   # korzysta z crossingF_dict utworzonego w list2dict
+        self.clearRepeatingSpecimens()
         if True == mutation:
             self.mutation()
-        self.clearRepeatingSpecimens()
         self.adjustPopulation(self.pop_count)
         self.updateBestSpecimens(self.pop_new)
 

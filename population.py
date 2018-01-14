@@ -21,11 +21,11 @@ class population:
 
     def insert(self, _path):    #Wstawia podana sciezke do populacji tak, sciezki byly posortowane od najlepszej do najgorszej. Sciezki wstawiamy TYLKO z uzyciem tej funkcji, inaczej bedzie syf.
         if len(self.paths) == 0:
-            self.paths.append(_path)
+            self.paths.append(copy.deepcopy(_path))
         else:
             for i in range(0, len(self.paths)):
                 if self.paths[i].cost > _path.cost:
-                    self.paths.insert(i, _path)
+                    self.paths.insert(i, copy.deepcopy(_path))
                     return
                 else:
                     pass

@@ -33,6 +33,7 @@ class Path:
 #TODO: Implement variance calculation
     def calcCost(self, terrain = None, display = False):   #Oblicza funkcje kosztu. Dopisze jeszcze liczenie wariancji - Chuti
         #Length
+        self.cost = 0
         if self.length > 0:
             self.cost += math.sqrt(pow(self.points[0].x - self.start_point.x, 2) +\
             pow(self.points[0].y - self.start_point.y, 2))
@@ -55,9 +56,9 @@ class Path:
             cv.line(mask, self.start_point.getPoint(), self.end_point.getPoint(), 1, glob.rover_radius)
         masked_var = cv.multiply(glob.variance_map, mask)
         #Terrain
-        masked_var_ter = cv.multiply(glob.terrain_map, masked_var)
+        # masked_var_ter = cv.multiply(glob.terrain_map, masked_var)
         #Total cost
-        total_cost = np.sum(masked_var_ter)
+        total_cost = np.sum(masked_var)
         self.cost *= 1 + total_cost
 
     def isEqual(self, path = None): #Zwraca True, jesli sciezki sa identyczne (tzn. identyczne wspolrzedne kolejnych wierzcholkow), w przeciwnym razie False

@@ -86,20 +86,25 @@ if __name__ == '__main__':
             # evo.updateBestSpecimens(evo.pop_new)    #Odswieza liste trzech najlepszych rozwiazan
             evo.evoSpin(mutation = True)
             gen_time_elapsed = time.time() - gen_time_elapsed
-            print "Best Path:", evo.pop_new.paths[0].printPath()    #printPath() Wypisuje kolejne punkty sciezki, tylko do debuggingu
-            print "Worst Path:", evo.pop_new.paths[-1].printPath()
+            # print "Best Path:", evo.pop_new.paths[0].printPath()    #printPath() Wypisuje kolejne punkty sciezki, tylko do debuggingu
+            # print "Worst Path:", evo.pop_new.paths[-1].printPath()
         print "Best Specimen Costs: ", evo.best_specimens[0].cost, evo.best_specimens[1].cost, evo.best_specimens[2].cost
-        for spec in evo.best_specimens:
-            print "Best specimen:"
-            spec.printPath()
+        # for spec in evo.best_specimens:
+        #     print "Best specimen:"
+        #     spec.printPath()
         for path in evo.best_specimens:
             window.drawPath(path, [0, 255, 0])
         print 'Generation:', evo.generation_counter, ' | Elapsed time:', gen_time_elapsed, 'seconds'
         print 'Best cost history:', evo.best_cost_history, '\n========================================================='
-        l=[evo.generation_counter, evo.best_specimens[0], evo.best_specimens[1] ,evo.best_specimens[2],
+        l=[evo.generation_counter, evo.best_specimens[0].cost, evo.best_specimens[1].cost, evo.best_specimens[2].cost,
         gen_time_elapsed]# ELEMENTY DO ZAPISU DO PLIKU
         wr.writerow(l)
         cv.imshow(window.window_name, window.tmp_map) #Tutaj odswiezany jest wyswietlany obrazek, tzn. tmp_map z naniesionymi sciezkami pojawia sie na ekranie
-        window.key = cv.waitKey(0) #To musi byc po kazdym imshow(), czeka na input z klawiatury. Parametr to czas czekania, 0 oznacza nieskonczonosc
+        if window.key == v_key:
+            key = cv.waitKey(1) #To musi byc po kazdym imshow(), czeka na input z klawiatury. Parametr to czas czekania, 0 oznacza nieskonczonosc
+            if key in [q_key, m_key, n_key, b_key, v_key]:
+                window.key = key
+        else:
+            window.key = cv.waitKey(0)
     csv_file.close()
     cv.destroyAllWindows()  #Po zakonczeniu programu (klawisz 'q') zamyka okienka zeby nie bylo segfaultow
