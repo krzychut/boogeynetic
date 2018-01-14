@@ -236,8 +236,8 @@ class evolution:
         y1=tmp_path.getPoint(i-1)[1]
         x2=tmp_path.getPoint(i+1)[0]
         y2=tmp_path.getPoint(i+1)[1]
-        tmp_x = int(x1+(x2-x1)/2)
-        tmp_y = int(y1+(y2-y1)/2)
+        tmp_x = int((x2+x1)/2)
+        tmp_y = int((y2+y1)/2)
         tmp_path.points[i].x = tmp_x
         tmp_path.points[i].y = tmp_y
         return tmp_path
@@ -247,11 +247,15 @@ class evolution:
             pop_count = len(self.pop_new.paths)
             rndindx=randint(0, len(self.mutate_dict)-1) #wybiera randomowo jeden ze wskazanych operatorów
             print self.mutate_dict[rndindx]
-            for i in range(pop_count):
-                tmp_path = self.mutate_dict[rndindx](self.pop_new.paths[i])
-                self.pop_new.insert(tmp_path)
+            tmp_paths = []
+            while 0.9 * pop_count < len(self.pop_new.paths):
+                tmp_paths.append(self.mutate_dict[rndindx](self.pop_new.paths[0]))
+                self.pop_new.delete(0)
+                # self.pop_new.insert(tmp_path)
+            for path in tmp_paths:
+                self.pop_new.insert(path)
         else:
-            return   #nie wiem czy to jest potrzebne ten else ale nie istotne można usunąć jak sie nie podoba ja sie boje
+            pass   #nie wiem czy to jest potrzebne ten else ale nie istotne można usunąć jak sie nie podoba ja sie boje
 
 
 

@@ -45,6 +45,12 @@ if __name__ == '__main__':
     _width = window.width)  #To zawiera populacje stara, populacje po selekcji i populacje po krzyzowaniu + funkcje do tego
     evo.list2dict(param.parameters_list)  #tu zmienia liste operatorów krzyzowania na dictionary
 
+    csv_file=open("output_data.csv",'wb')# Plik w ktorym beda dane z testu
+    wr=csv.writer(csv_file)     #PROSTY ZAPIS DO PLIKU CSV
+    wr.writerow(["_exp_beta","_top_percent","pop_count","_n","_height","_width"])
+    wr.writerow([param.beta,param.top_percent,param.pop_count,param.n,window.height,window.width])
+    wr.writerow(["Generation","Best Specimen 0","Best Specimen 1","Best Specimen 2", "Gen Time"])
+
     gen_time_elapsed = time.time()
     evo.selection() #Tu selekcja wedlug rozkladu wykladniczego
     evo.crossing()  #Tu krzyzowanie. operatory dobiera na podstawie crossingF_dict z list2dict
@@ -52,12 +58,6 @@ if __name__ == '__main__':
     evo.adjustPopulation(pop_count) #Dodaje losowe sciezki albo usuwa najgorsze z nowej populacji, zeby bylo ich tyle co przed selekcja
     evo.updateBestSpecimens(evo.pop_new)
     gen_time_elapsed = time.time() - gen_time_elapsed
-
-    csv_file=open("output_data.csv",'wb')# Plik w ktorym beda dane z testu
-    wr=csv.writer(csv_file)     #PROSTY ZAPIS DO PLIKU CSV
-    wr.writerow(["_exp_beta","_top_percent","pop_count","_n","_height","_width"])
-    wr.writerow([param.beta,param.top_percent,param.pop_count,param.n,window.height,window.width])
-    wr.writerow(["POPULACJA","b_cost_0","b_cost_1",""])
 
 #___MAIN LOOP___#
     while(True):
@@ -84,7 +84,7 @@ if __name__ == '__main__':
             # evo.clearRepeatingSpecimens()
             # evo.adjustPopulation(pop_count)
             # evo.updateBestSpecimens(evo.pop_new)    #Odswieza liste trzech najlepszych rozwiazan
-            evo.evoSpin(mutation = False)
+            evo.evoSpin(mutation = True)
             gen_time_elapsed = time.time() - gen_time_elapsed
             print "Best Path:", evo.pop_new.paths[0].printPath()    #printPath() Wypisuje kolejne punkty sciezki, tylko do debuggingu
             print "Worst Path:", evo.pop_new.paths[-1].printPath()
@@ -96,7 +96,8 @@ if __name__ == '__main__':
             window.drawPath(path, [0, 255, 0])
         print 'Generation:', evo.generation_counter, ' | Elapsed time:', gen_time_elapsed, 'seconds'
         print 'Best cost history:', evo.best_cost_history, '\n========================================================='
-        l=[evo.generation_counter,evo.best_cost_history[0],evo.best_cost_history[1],evo.best_cost_history[2]]# ELEMENTY DO ZAPISU DO PLIKU
+        l=[evo.generation_counter, evo.best_specimens[0], evo.best_specimens[1] ,evo.best_specimens[2],
+        gen_time_elapsed]# ELEMENTY DO ZAPISU DO PLIKU
         wr.writerow(l)
         cv.imshow(window.window_name, window.tmp_map) #Tutaj odswiezany jest wyswietlany obrazek, tzn. tmp_map z naniesionymi sciezkami pojawia sie na ekranie
         window.key = cv.waitKey(0) #To musi byc po kazdym imshow(), czeka na input z klawiatury. Parametr to czas czekania, 0 oznacza nieskonczonosc

@@ -6,6 +6,7 @@ import math as math
 from path import *
 from point import *
 from settings import*
+import copy
 
 class population:
     def __init__(self, _pop_count = 0, _n = 0, _height = 0, _width = 0, _start_point = Point(), _end_point = Point(-1, -1)):
@@ -32,7 +33,7 @@ class population:
         # self.path_length = len(self.paths)
 
     def delete(self, _index = -1):  #Usuwa sciezke o podanym indeksie ([] to domyslnie lista, wiec sama sie potem naprawia)
-        tmp_path = self.paths.pop(_index)
+        tmp_path = copy.deepcopy(self.paths.pop(_index))
         # self.path_length = len(self.paths)
         return tmp_path
 
