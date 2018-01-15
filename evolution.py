@@ -311,6 +311,23 @@ class evolution:
             print 'Old population: ', self.pop_count,'New Population:', len(self.pop_selected.paths)
 
 #___UTILITY FUNCTIONS___#
+    def calcDiversity(self):
+        diversity = 0.0
+        for i in range(self.path_length):
+            x = []
+            y = []
+            for path in self.pop.paths:
+                x.append(path.points[i].x)
+                y.append(path.points[i].x)
+            mean_x = np.mean(x)
+            mean_y = np.mean(y)
+            div_i = 0
+            for j in range(len(x)):
+                div_i += (x[j]-mean_x)**2 + (y[j]-mean_y)**2
+            diversity += div_i
+        return diversity / self.path_length / self.width / self.height
+
+
     def evoSpin(self, mutation = True):
         self.nextGeneration()    #Stara populacja jest nadpisana przez nowa, pozostale populacje sa czyszczone
         self.selection()
