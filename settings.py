@@ -2,7 +2,7 @@
 import linecache
 
 global DEBUG
-DEBUG = True
+DEBUG = False
 
 global esc
 esc = 27
@@ -29,6 +29,7 @@ class Parameters:
         self.beta=0#beta rozk�ady wyk�adniczego
         self.top_percent = 1
         self.parameters_list=["pathMean","mutateNormalAll"] #wektor operatorów
+        self.generations = 100
  #---------------------------------------------------------------------
     def getNodNum(self,num):   #pobiera liczbe wezlow
         self.n=num
@@ -65,14 +66,15 @@ class Parameters:
     def SetPack(self,number):#ustawia zestaw parametr�w z pliku
         wiersz = linecache.getline(self.file, number+2)
         str_vec=wiersz.split(' ')
-        self.n,self.pop_count,self.map,self.beta,self.top_percent=str_vec[0:5]#pierwsze 5 parametrów wczytane
-        self.parameters_list=str_vec[5:]#pozostałe elementy czyli wektor operatorow plu 'END'
+        self.n,self.pop_count,self.map,self.beta,self.top_percent,self.generations=str_vec[0:6]#pierwsze 5 parametrów wczytane
+        self.parameters_list=str_vec[6:]#pozostałe elementy czyli wektor operatorow plu 'END'
         del self.parameters_list[-1]#usuwanie 'END'
         l=len(self.map)
         self.map=self.map[1:l-1]
         self.n=int(float(self.n))
         self.pop_count=int(float(self.pop_count))
         self.beta=int(float(self.beta))
+        self.generations = int(self.generations)
         print self.parameters_list[0:]
 
         return wiersz
